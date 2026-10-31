@@ -4,7 +4,7 @@
 
 EDITH shows both sides of the same air: what the air does to you (live AQI on India's CPCB scale, personal exposure, the best time to go out) and what you do to the air (your carbon footprint, its biggest source, and cuts in kg CO2 and rupees).
 
-Status: early development. Project setup only; features are being added step by step. Full product spec: [docs/EDITH_CONTEXT.md](docs/EDITH_CONTEXT.md).
+Status: early development. Project setup only; features are being added step by step.
 
 ## Run locally
 
