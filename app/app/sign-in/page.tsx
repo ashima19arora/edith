@@ -44,8 +44,10 @@ export default function SignIn() {
       <main className="screen sign-in halftone">
         <CornerWeb />
         <div className="spider-drop" aria-hidden="true">
-          <span />
-          <SpiderIcon className="spider-drop-icon" />
+          <div className="spider-bob">
+            <span />
+            <SpiderIcon className="spider-drop-icon" />
+          </div>
         </div>
 
         <section className="sign-in-pitch">

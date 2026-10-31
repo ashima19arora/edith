@@ -63,7 +63,7 @@ export default function PickStyle() {
     <ThemeRoot mode="hero">
       <main className="screen halftone">
         <CornerWeb />
-        <div className="screen-body style-body">
+        <div className="screen-body style-body screen-in">
           <button type="button" className="back-btn" aria-label="Back" onClick={() => router.push("/app/sign-in")}>
             <BackIcon />
           </button>

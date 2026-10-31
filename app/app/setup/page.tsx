@@ -158,6 +158,21 @@ function DistanceStep({ draft, update }: StepProps) {
     const base = draft.location;
     if (base?.lat == null || base.lng == null) return setMessage(TEXT.addressNeedsBase);
     try {
+      const response = await fetch("/api/distance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ from: { lat: base.lat, lng: base.lng }, to: address }),
+      });
+      if (response.ok) {
+        const { km } = (await response.json()) as { km: number };
+        const rounded = Math.min(40, Math.max(1, Math.round(km)));
+        update({ kmOneWay: rounded });
+        return setMessage(TEXT.addressRouted(rounded));
+      }
+    } catch {
+      // Fall through to the estimate
+    }
+    try {
       const [place] = await geocode(address);
       if (!place) return setMessage(TEXT.addressFailed);
       const km = straightLineKm(base.lat, base.lng, place.latitude, place.longitude) * ROAD_DISTANCE_FACTOR;
@@ -466,14 +481,14 @@ function Finish({ answers, onEnter }: { answers: SetupAnswers; onEnter: () => vo
 
   useEffect(() => {
     if (ticked >= copy.ready.length) return;
-    const timer = setTimeout(() => setTicked(ticked + 1), 500);
+    const timer = setTimeout(() => setTicked(ticked + 1), 950);
     return () => clearTimeout(timer);
   }, [ticked, copy.ready.length]);
 
   return (
     <main className="screen finish halftone">
       <CornerWeb />
-      <div className="screen-body">
+      <div className="screen-body screen-in">
         {mode === "hero" ? (
           <p className="sticker">{copy.sticker}</p>
         ) : (
@@ -596,7 +611,7 @@ export default function Setup() {
   return (
     <ThemeRoot>
       <main className="screen setup halftone">
-        <CornerWeb />
+        <CornerWeb key={position.section} />
         <header className="setup-head">
           {hasWebBack ? (
             <button type="button" className="back-btn" aria-label={TEXT.back} onClick={back}>
@@ -623,7 +638,7 @@ export default function Setup() {
           ))}
         </div>
 
-        <div className="screen-body">
+        <div key={step} className="screen-body screen-in">
           <p className="progress-text">{progressText}</p>
 
           <div className="question">

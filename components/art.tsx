@@ -4,14 +4,18 @@ const WEB_RAYS = [
   [0, 150], [30, 148], [62, 140], [92, 122], [118, 96], [136, 68], [146, 36], [150, 0],
 ];
 
+function strandDelay(index: number) {
+  return { animationDelay: `${index * 55}ms` };
+}
+
 export function CornerWeb() {
   const rings = [0.28, 0.5, 0.72, 0.95];
   return (
     <svg className="corner-web" viewBox="0 0 150 150" aria-hidden="true">
-      {WEB_RAYS.map(([x, y]) => (
-        <path key={`${x}-${y}`} d={`M150 0L${150 - x} ${y}`} />
+      {WEB_RAYS.map(([x, y], i) => (
+        <path key={`${x}-${y}`} className="web-strand" pathLength={1} style={strandDelay(i)} d={`M150 0L${150 - x} ${y}`} />
       ))}
-      {rings.map((r) => {
+      {rings.map((r, ring) => {
         const points = WEB_RAYS.map(([x, y]) => [150 - x * r, y * r]);
         const d = points
           .map(([x, y], i) => {
@@ -23,7 +27,7 @@ export function CornerWeb() {
             return `Q${cx} ${cy} ${x} ${y}`;
           })
           .join("");
-        return <path key={r} d={d} />;
+        return <path key={r} className="web-strand" pathLength={1} style={strandDelay(WEB_RAYS.length + ring)} d={d} />;
       })}
     </svg>
   );
@@ -96,7 +100,7 @@ export function CameraIcon() {
 export function CheckIcon({ size = 16 }: { size?: number }) {
   return (
     <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M5 13l4.5 4.5L19 7" />
+      <path pathLength={1} d="M5 13l4.5 4.5L19 7" />
     </svg>
   );
 }

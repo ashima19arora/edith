@@ -30,7 +30,7 @@ export default function AppEntry() {
   if (!ready) return null;
   return (
     <ThemeRoot>
-      <main className="screen screen-center">
+      <main className="screen screen-center screen-in">
         <h1 className="page-title">{HOME_SOON.title}</h1>
         <p className="page-intro">{HOME_SOON.line}</p>
       </main>

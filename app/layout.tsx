@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Bangers, Inter, Space_Grotesk } from "next/font/google";
+import { Bangers, Comic_Neue, Inter } from "next/font/google";
 import "./globals.css";
 
 const comic = Bangers({ variable: "--font-comic", subsets: ["latin"], weight: "400" });
 const body = Inter({ variable: "--font-body", subsets: ["latin"] });
-const label = Space_Grotesk({ variable: "--font-label", subsets: ["latin"] });
+const label = Comic_Neue({ variable: "--font-label", subsets: ["latin"], weight: "700" });
 
 export const metadata: Metadata = {
   title: "EDITH",

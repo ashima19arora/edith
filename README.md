@@ -12,6 +12,10 @@
   Built for <b>Hack the Circle</b> (Open Circle, MAIT, Delhi) · Track: Sustainability &amp; Social Impact · <a href="LICENSE">MIT licensed</a>
 </p>
 
+<p align="center">
+  <b>Team Felix Felicis:</b> Rahul, Diwakar, Kriti, Ashima
+</p>
+
 ## The problem
 
 Air pollution takes about **8 years** off a Delhi resident's life, against 3.5 years for the average Indian, and nearly half of Delhi's pollution comes from local sources ([AQLI 2025, University of Chicago](https://aqli.epic.uchicago.edu/)).
@@ -310,6 +314,7 @@ Every number in the app, explained with its source.
 | Accounts and data | Supabase: Google sign-in, Postgres, row-level security |
 | Guest data | Browser storage, behind the same storage interface |
 | Air data and place search | Open-Meteo |
+| Road distance (optional) | Google Maps Routes API, with an estimate as the fallback |
 | AI (planned) | Gemini, on the server only, for bill reading, mission picking and the assistant |
 | Hosting | Vercel |
 
@@ -342,6 +347,7 @@ npm run build
 app/                  Pages and server routes
   app/                The app: sign-in, style picker, setup
   api/air/            Live AQI for the sign-in screen
+  api/distance/       Road distance for a typed address
   auth/callback/      Google sign-in return
 components/           Shared UI and comic artwork
 lib/
