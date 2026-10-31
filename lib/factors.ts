@@ -67,6 +67,9 @@ export const PASSENGER_KG_PER_KM = {
 // Assumed passengers when a cab or car is shared.
 export const SHARED_PASSENGERS = 2;
 
+// Placeholder: roads are longer than the straight line between two places.
+export const ROAD_DISTANCE_FACTOR = 1.3;
+
 // Placeholders: typical Delhi speeds, km/h, to convert logged minutes to distance.
 export const SPEED_KMH: Record<TravelMode, number> = {
   metro: 35,
