@@ -8,8 +8,10 @@ import type { AqiCategory, Pollutant, TimeBlock, TravelMode, Fuel } from "./type
 // CEA CO2 Baseline Database v20.0 (Dec 2024), weighted average, 2023-24.
 export const GRID_KG_PER_KWH = 0.727;
 
-// Placeholder: base household use is 2 + 1.5 x people, scaled by home type.
-export const BASE_KWH = { fixed: 2, perPerson: 1.5 };
+// Estimate: base use without AC or heating, scaled by home type. Gives 120 units a month for 4 people.
+// CSE, "Power Pangs": a typical Delhi home uses about 181 kWh a month, and about half as much in
+// winter as in summer, so roughly 120 outside the cooling season. Bills correct this per home.
+export const BASE_KWH = { fixed: 1, perPerson: 0.75 };
 export const HOME_TYPE_MULTIPLIER = { flat: 1, house: 1.2, pg: 0.7 };
 
 // Placeholders: typical appliance draw.
@@ -76,18 +78,22 @@ export const SPEED_KMH: Record<TravelMode, number> = {
   walk: 5,
 };
 
-// --- Food and deliveries (all placeholders, kg CO2) ---
+// --- Food and deliveries (kg CO2) ---
 
+// Estimates anchored on Pathak et al. (2010): about 0.6 kg a day for a vegetarian Indian diet
+// (0.2 a meal) and about 1 kg for a non-vegetarian one (two veg meals plus one chicken meal).
+// The other meals are placed between and above those to keep the required order.
 export const MEAL_KG = {
-  veg: 0.4,
-  "veg-dairy": 0.7,
-  egg: 0.8,
-  chicken: 1.5,
-  fish: 1.3,
-  mutton: 3.5,
+  veg: 0.2,
+  "veg-dairy": 0.35,
+  egg: 0.4,
+  chicken: 0.6,
+  fish: 0.55,
+  mutton: 1.5,
   skipped: 0,
 };
 
+// Placeholders.
 export const DELIVERY_KG = { food: 0.5, grocery: 0.3, parcel: 0.6 };
 
 // --- Flights (placeholders, kg CO2 per round trip) ---
@@ -100,8 +106,8 @@ export const FLIGHT_BAND_TRIPS = {
   international: { "0": 0, "1": 1, "2-3": 2.5, "4+": 5 },
 };
 
-// Placeholder: round figure for India's per-person footprint, for the "In perspective" card. Needs a citation.
-export const AVERAGE_INDIAN_KG_PER_YEAR = 2000;
+// Global Carbon Project via Our World in Data: India's fossil CO2 per person, 2024.
+export const AVERAGE_INDIAN_KG_PER_YEAR = 2200;
 
 // --- AQI ---
 
@@ -114,8 +120,9 @@ export const AQI_INDEX_BANDS: [number, number][] = [
   [401, 500],
 ];
 
-// CPCB National Air Quality Index (2014): concentration ranges matching AQI_INDEX_BANDS.
-// ug/m3, except CO in mg/m3.
+// CPCB National Air Quality Index (2014), as published by IES Arthapedia:
+// https://ies.gov.in/arthapedia/concept/national-air-quality-index
+// Concentration ranges matching AQI_INDEX_BANDS. ug/m3, except CO in mg/m3.
 // The last row's upper limit is not part of the CPCB table, which only says "250+" etc.
 // Placeholder: chosen to extrapolate the top band, and readings above it cap at 500.
 export const AQI_BREAKPOINTS: Record<Pollutant, [number, number][]> = {
