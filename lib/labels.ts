@@ -276,3 +276,74 @@ export const HOME_SOON = {
   title: "Coming next",
   line: "Your setup is saved. The home screen is the next thing being built.",
 };
+
+export const LEGAL = {
+  home: "← EDITH home",
+  updated: "Last updated: 1 November 2026",
+  contactPrefix: "Questions or requests:",
+  email: "arora.19ashima@gmail.com",
+  about:
+    "EDITH is an India-first air quality and carbon footprint companion. It shows live air quality, the best time to go out, and your own footprint with ways to cut it.",
+  privacyTitle: "Privacy Policy",
+  termsTitle: "Terms of Use",
+  privacy: [
+    {
+      heading: "Who we are",
+      body: "EDITH is a student project built by Team Felix Felicis (Rahul, Diwakar, Kriti and Ashima) for the Hack the Circle hackathon. This policy explains what the app collects and why.",
+    },
+    {
+      heading: "Using EDITH as a guest",
+      body: "If you choose \"Try without an account\", your answers stay in your browser on this device. We don't receive them, and clearing your browser data removes them.",
+    },
+    {
+      heading: "Signing in with Google",
+      body: "If you sign in with Google, we receive your name and email address, and a unique account ID. We use these only to sign you in and keep your data under your account. We don't ask for access to your Gmail, contacts or files.",
+    },
+    {
+      heading: "What you tell us",
+      body: "When signed in, we store your setup answers: your area or location, household size, home type, pets, routine, travel, energy use, food and deliveries. This includes whether someone at home is a child, elderly, pregnant, or has a breathing or heart condition, which is used only to show air quality warnings.",
+    },
+    {
+      heading: "How we use it",
+      body: "Only to run EDITH for you: showing the air where you are, estimating your footprint, and giving advice that fits your life. We don't sell your data or use it for advertising.",
+    },
+    {
+      heading: "Services that handle data for us",
+      body: "Supabase stores accounts and signed-in data. Vercel hosts the app. Google provides sign-in. Open-Meteo receives place names you search for, and coordinates, to return air quality and locations. If road distance is turned on, Google Maps receives your base location and the address you type. If you use location access, your browser asks your permission first.",
+    },
+    {
+      heading: "Keeping and deleting your data",
+      body: "We keep signed-in data until you ask us to delete it. Email us from your account's address and we'll delete your account and data.",
+    },
+    {
+      heading: "Google user data",
+      body: "EDITH's use of information received from Google is limited to the sign-in purposes above. We don't transfer it to others except the services named here, and we don't use it for advertising.",
+    },
+    {
+      heading: "Changes",
+      body: "As features are added we'll update this page and the date above. Features that use new data, such as reading bill photos, will be described here before they go live.",
+    },
+  ],
+  terms: [
+    {
+      heading: "Using EDITH",
+      body: "EDITH is a free student project, offered as it is. Features may change or stop working while it's being built.",
+    },
+    {
+      heading: "Not medical advice",
+      body: "Air quality, cigarette equivalents and Lives are planning guides, not medical advice. For breathing trouble or chest pain, get medical help. In an emergency in India, call 112.",
+    },
+    {
+      heading: "Estimates",
+      body: "Air quality comes from modelled data and can differ from nearby monitoring stations. Footprint numbers are estimates and shouldn't be relied on for legal, financial or compliance purposes.",
+    },
+    {
+      heading: "Your account",
+      body: "Please use your own Google account and don't misuse the app or try to access other people's data.",
+    },
+    {
+      heading: "Open source",
+      body: "EDITH's code is available under the MIT License. Data sources are credited in the app's documentation.",
+    },
+  ],
+};
