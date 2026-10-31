@@ -2,24 +2,26 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { HOME_SOON } from "@/lib/labels";
-import { getAccount, storeFor } from "@/lib/storage";
-import { setMode, ThemeRoot } from "@/lib/theme";
+import { HomeScreen } from "@/components/home-screen";
+import { getAccount, storeFor, type Account, type Profile } from "@/lib/storage";
+import { setMode } from "@/lib/theme";
+import type { SetupAnswers } from "@/lib/types";
 
-// Sends everyone to the right place in the first-run flow. Home itself is the next step.
+// Sends everyone to the right place in the first-run flow, then shows Home.
 export default function AppEntry() {
   const router = useRouter();
-  const [ready, setReady] = useState(false);
+  const [state, setState] = useState<{ account: Account; profile: Profile; setup: SetupAnswers } | null>(null);
 
   useEffect(() => {
     async function route() {
       const account = await getAccount();
       if (!account) return router.replace("/app/sign-in");
       try {
-        const profile = await storeFor(account).getProfile();
+        const store = storeFor(account);
+        const [profile, setup] = await Promise.all([store.getProfile(), store.getSetup()]);
         setMode(profile.mode);
-        if (!profile.onboarded) return router.replace("/app/style");
-        setReady(true);
+        if (!profile.onboarded || !setup) return router.replace("/app/style");
+        setState({ account, profile, setup });
       } catch {
         router.replace("/app/sign-in?error=1");
       }
@@ -27,13 +29,5 @@ export default function AppEntry() {
     route();
   }, [router]);
 
-  if (!ready) return null;
-  return (
-    <ThemeRoot>
-      <main className="screen screen-center screen-in">
-        <h1 className="page-title">{HOME_SOON.title}</h1>
-        <p className="page-intro">{HOME_SOON.line}</p>
-      </main>
-    </ThemeRoot>
-  );
+  return state ? <HomeScreen {...state} /> : null;
 }

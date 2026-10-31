@@ -68,6 +68,11 @@ function trailingMean(hours: HourlyAir[], end: number, pollutant: Pollutant, win
   return values.reduce((sum, v) => sum + v, 0) / values.length;
 }
 
+// Trailing 24-hour PM2.5 mean ending at hour `end`, for the cigarette equivalent.
+export function pm25Mean(hours: HourlyAir[], end: number): number | null {
+  return trailingMean(hours, end, "pm25", 24);
+}
+
 // Headline AQI: CPCB trailing averages (24 h, or 8 h for O3 and CO) ending at hour `end`.
 export function headlineAqi(hours: HourlyAir[], end: number): AqiResult | null {
   const means: Concentrations = {};

@@ -65,7 +65,8 @@ EDITH is being built in the open, step by step. This table is kept honest: the s
 | Sign-in, style picker and setup flow, in both modes | ✅ Built |
 | Guest mode, with data stored on the device | ✅ Built |
 | Google sign-in, with answers saved to Supabase | ✅ Built |
-| Home, daily check-in, Air today | ⏳ Designed, next to build |
+| Home, with live air, Go Time, lives and daily missions | ✅ Built |
+| Daily check-in, Air today | ⏳ Designed, next to build |
 | My footprint, Progress, Family, EDITH assistant, Settings | ⏳ Designed, to build |
 | Reading bill photos with Gemini | ⏳ To build; setup asks for a rough amount for now |
 | Installable PWA, landing page | ⏳ To build |
@@ -297,6 +298,8 @@ Every number in the app, explained with its source.
 | Cigarette equivalent | 22 µg/m³ PM2.5 for 24 h ≈ 1 cigarette | Berkeley Earth |
 | Household electricity starting estimate | About 180 units a month for 4 people | [CSE analysis of Delhi's power use](https://www.cseindia.org/cse-analysis-of-delhis-power-consumption-paints-a-dark-picture-5877) |
 | Food | About 0.6 kg a day vegetarian, 1 kg non-vegetarian | Pathak et al. 2010 (study of Indian diets) |
+| Metro fares | ₹11–64 by distance, from August 2025 | [DMRC revision, via The Week](https://www.theweek.in/news/india/2025/08/25/delhi-metro-fare-hike-minimum-ticket-price-now-is-11-check-full-details-here.html) |
+| Fuel prices | Delhi petrol ₹102.12 and diesel ₹95.20 per litre (Sep 2026), CNG ₹81.09 per kg (May 2026) | Press reports; these change often |
 | Average Indian | 2.2 t CO2 per person per year (2024) | [Global Carbon Project, via Our World in Data](https://ourworldindata.org/co2/country/india) |
 
 **What these numbers are and aren't.** They're estimates to help you plan, not measurements and not medical advice.
@@ -315,7 +318,7 @@ Every number in the app, explained with its source.
 | Guest data | Browser storage, behind the same storage interface |
 | Air data and place search | Open-Meteo |
 | Road distance (optional) | Google Maps Routes API, with an estimate as the fallback |
-| AI (planned) | Gemini, on the server only, for bill reading, mission picking and the assistant |
+| AI | Gemini, on the server only: mission picking (optional, with a rule-based fallback), then bill reading and the assistant (planned) |
 | Hosting | Vercel |
 
 ## Run it locally
@@ -348,8 +351,10 @@ app/                  Pages and server routes
   app/                The app: sign-in, style picker, setup
   api/air/            Live AQI for the sign-in screen
   api/distance/       Road distance for a typed address
+  api/mission/        AI choice of the daily mission
   auth/callback/      Google sign-in return
 components/           Shared UI and comic artwork
+config/missions.ts    The daily missions and their savings formulas
 lib/
   factors.ts          Every emission and AQI constant, with its source
   aqi.ts              CPCB AQI, Go Time, cigarette equivalent

@@ -27,6 +27,9 @@ export const INDUCTION_KWH_PER_DAY = 1.5;
 // Bill correction loop: ratio limits, and how much weight a new bill gets over the old ratio.
 export const CALIBRATION = { min: 0.5, max: 2, smoothing: 0.5 };
 
+// Midpoint of each setup answer for AC hours a day in summer.
+export const AC_HOURS_BAND = { "1-3": 2, "4-6": 5, "7-10": 8.5, "10+": 12 };
+
 // Winter months (1 = January); everything else is summer.
 export const WINTER_MONTHS = [11, 12, 1, 2];
 
@@ -69,6 +72,34 @@ export const SHARED_PASSENGERS = 2;
 
 // Placeholder: roads are longer than the straight line between two places.
 export const ROAD_DISTANCE_FACTOR = 1.3;
+
+// Delhi Metro fares from 25 August 2025 (DMRC): [up to this many km, rupees per trip].
+export const METRO_FARES: [number, number][] = [
+  [2, 11],
+  [5, 21],
+  [12, 32],
+  [21, 43],
+  [32, 54],
+  [Infinity, 64],
+];
+
+// Delhi retail prices, rupees per litre (per kg for CNG). Petrol and diesel as reported on 7 Sep 2026,
+// CNG on 23 May 2026. They change, so they need refreshing.
+export const FUEL_PRICE_INR: Record<Exclude<Fuel, "electric">, number> = {
+  petrol: 102.12,
+  diesel: 95.2,
+  cng: 81.09,
+};
+
+// Placeholders: rough Delhi costs for working out savings.
+export const AUTO_INR_PER_KM = 14;
+export const CAB_INR_PER_KM = 18;
+export const BUS_FARE_INR = 15;
+export const ELECTRICITY_INR_PER_KWH = 6.5;
+export const LPG_INR_PER_CYLINDER = 913;
+export const PNG_INR_PER_DAY = 15;
+export const MEAL_SWAP_INR = { chicken: 60, mutton: 150 };
+export const DELIVERY_ORDER_INR = 100;
 
 // Placeholders: typical Delhi speeds, km/h, to convert logged minutes to distance.
 export const SPEED_KMH: Record<TravelMode, number> = {
@@ -161,6 +192,12 @@ export const AQI_CATEGORIES: [AqiCategory, number][] = [
   ["Very Poor", 400],
   ["Severe", 500],
 ];
+
+// Categories that trigger alerts and "stay in" advice.
+export const AQI_BAD_CATEGORIES: AqiCategory[] = ["Poor", "Very Poor", "Severe"];
+
+// Used when a user has no coordinates.
+export const DELHI = { lat: 28.6139, lng: 77.209 };
 
 // Go Time: contiguous window inside daytime. Hours of day, end exclusive.
 export const GO_TIME = { hours: 2, dayStart: 6, dayEnd: 21 };

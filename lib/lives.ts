@@ -22,7 +22,7 @@ export function exerciseBlocks(exercise: SetupAnswers["exercise"]): TimeBlock[] 
 }
 
 // Average loss across a block's hours, since we don't know which of them the user is outside.
-function blockLoss(block: TimeBlock, day: HourlyAir[]): number {
+export function blockLoss(block: TimeBlock, day: HourlyAir[]): number {
   const hours = blockHours(block);
   const slots = day.filter((h) => hours.includes(Number(h.time.slice(11, 13))));
   const losses = slots

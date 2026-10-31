@@ -71,9 +71,9 @@ const WINDOWS = BUILDINGS.flatMap(([x, width, top]) => {
   twinkle: i % 6 === 0,
 }));
 
-export function Skyline() {
+export function Skyline({ still = false }: { still?: boolean }) {
   return (
-    <svg className="skyline" viewBox="0 0 440 100" preserveAspectRatio="none" aria-hidden="true">
+    <svg className={still ? "skyline still" : "skyline"} viewBox="0 0 440 100" preserveAspectRatio="none" aria-hidden="true">
       {BUILDINGS.map(([x, width, top]) => (
         <rect key={x} className="building" x={x} y={top} width={width} height={100 - top} />
       ))}
@@ -89,6 +89,14 @@ export function Skyline() {
           style={{ animationDelay: twinkle ? `${delay}ms, ${delay + 2000}ms` : `${delay}ms` }}
         />
       ))}
+    </svg>
+  );
+}
+
+export function FlameIcon() {
+  return (
+    <svg viewBox="0 0 18 22" fill="#FF3E5F" stroke="#0A0A0A" strokeWidth="1.5" aria-hidden="true">
+      <path d="M9 1c1 4 6 6 6 12a6 6 0 01-12 0c0-3 2-4 3-7 1 1 2 2 2 3 1-2 1-5 1-8z" />
     </svg>
   );
 }

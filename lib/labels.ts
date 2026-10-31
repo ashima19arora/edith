@@ -272,10 +272,6 @@ export const RECAP_TEXT = {
   noDeliveries: pair("No deliveries", "No orders"),
 };
 
-export const HOME_SOON = {
-  title: "Coming next",
-  line: "Your setup is saved. The home screen is the next thing being built.",
-};
 
 export const LEGAL = {
   home: "← EDITH home",
@@ -309,7 +305,7 @@ export const LEGAL = {
     },
     {
       heading: "Services that handle data for us",
-      body: "Supabase stores accounts and signed-in data. Vercel hosts the app. Google provides sign-in. Open-Meteo receives place names you search for, and coordinates, to return air quality and locations. If road distance is turned on, Google Maps receives your base location and the address you type. If you use location access, your browser asks your permission first.",
+      body: "Supabase stores accounts and signed-in data. Vercel hosts the app. Google provides sign-in. Open-Meteo receives place names you search for, and coordinates, to return air quality and locations. If road distance is turned on, Google Maps receives your base location and the address you type. If AI suggestions are turned on, Google Gemini receives your biggest footprint source and a list of possible daily tips, with no name or contact details, to choose today's tip. If you use location access, your browser asks your permission first.",
     },
     {
       heading: "Keeping and deleting your data",
@@ -321,7 +317,7 @@ export const LEGAL = {
     },
     {
       heading: "Changes",
-      body: "As features are added we'll update this page and the date above. Features that use new data, such as reading bill photos, will be described here before they go live.",
+      body: "As features are added we'll update this page and the date above. Features that use new data, such as reading bill photos or the EDITH assistant, will be described here before they go live.",
     },
   ],
   terms: [
@@ -346,4 +342,142 @@ export const LEGAL = {
       body: "EDITH's code is available under the MIT License. Data sources are credited in the app's documentation.",
     },
   ],
+};
+
+export const NAV = {
+  home: { hero: "City", plain: "Home", href: "/app" },
+  air: { hero: "Airspace", plain: "Air Today", href: "/app/air" },
+  checkin: { hero: "Canon Event", plain: "Check-in", href: "/app/checkin" },
+  footprint: { hero: "Collateral", plain: "Footprint", href: "/app/footprint" },
+  progress: { hero: "Ranks", plain: "Progress", href: "/app/progress" },
+};
+
+export const COMING_SOON = {
+  air: { title: LABELS.airTab, nav: "air" },
+  checkin: { title: LABELS.checkinTab, nav: "checkin" },
+  footprint: { title: LABELS.footprintTab, nav: "footprint" },
+  progress: { title: LABELS.progressTab, nav: "progress" },
+  family: { title: LABELS.family, nav: null },
+  assistant: { title: LABELS.assistant, nav: null },
+  settings: { title: pair("Settings", "Settings"), nav: null },
+} as const;
+
+export const HOME_TEXT = {
+  comingSoon: "This part of EDITH is coming soon.",
+  meanwhile: (area: string) => `Meanwhile, in ${area}…`,
+  meanwhileNoArea: "Meanwhile, in your city…",
+  yourLocation: "Your location",
+  date: (date: string) =>
+    new Date(`${date}T00:00:00Z`).toLocaleDateString("en-IN", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      timeZone: "UTC",
+    }),
+  headFamily: pair("Squad", "Family"),
+  headAssistant: pair("EDITH", "Assistant"),
+  headProfile: pair("You", "Profile"),
+  youInitial: "Y",
+  says: "EDITH says",
+  alertTag: pair("Squad Alert", "Health alert"),
+  threatTag: pair("Threat level · AQI", "Air quality"),
+  footprintTag: pair("My footprint", "My footprint"),
+  footprintUnit: pair("kg CO₂ this month", "kg CO₂ this month"),
+  headline: {
+    hero: {
+      unknown: "Can't reach the air data right now. Try again in a bit.",
+      clean: "Clean skies! Perfect day for a walk.",
+      okay: (when: string) => `Not bad out there. Best time to head out is ${when}.`,
+      okayTomorrow: (when: string) => `Not bad out there. Tomorrow's best time is ${when}.`,
+      okayNoWindow: "Not bad out there today.",
+      heavyUntil: (hour: string) => `Heavy air today! Stay in till ${hour}, then you're good to go.`,
+      heavyAllDay: (when: string) => `Heavy air all day! If you must head out, ${when} is the least bad.`,
+      heavyTomorrow: (when: string) => `Heavy air tonight! Stay in. Tomorrow's best time is ${when}.`,
+      heavyNoWindow: "Heavy air today! Stay in if you can.",
+      windowOpen: (until: string) => `Heavy air today, but your window's open! Head out till ${until}.`,
+    },
+    plain: {
+      unknown: "We can't get the air data right now. Please try again soon.",
+      clean: "The air is clean today. It's a good day for a walk.",
+      okay: (when: string) => `The air is okay today. The best time to go out is ${when}.`,
+      okayTomorrow: (when: string) => `The air is okay now. Tomorrow's best time is ${when}.`,
+      okayNoWindow: "The air is okay today.",
+      heavyUntil: (hour: string) => `The air is heavy today. Stay in till ${hour}, then it's fine to go out.`,
+      heavyAllDay: (when: string) => `The air is heavy all day. If you have to go out, ${when} is the least bad.`,
+      heavyTomorrow: (when: string) => `The air is heavy tonight. Stay in if you can. Tomorrow's best time is ${when}.`,
+      heavyNoWindow: "The air is heavy today. Stay in if you can.",
+      windowOpen: (until: string) => `The air is heavy today, but this is your best time. Go out before ${until}.`,
+    },
+  },
+  alert: {
+    hero: {
+      children: "the little ones",
+      elderly: "elders",
+      breathing: "anyone with breathing or heart trouble",
+      insideTill: (who: string, hour: string) => `Keep ${who} inside till ${hour}.`,
+      insideToday: (who: string) => `Keep ${who} inside today.`,
+      dog: (n: number) => `Walk the ${n === 1 ? "dog" : "dogs"} during Go Time, and keep it short.`,
+      bird: "Keep birds away from open windows and smoke.",
+      otherPets: "Keep other pets indoors.",
+    },
+    plain: {
+      children: "the children",
+      elderly: "older family members",
+      breathing: "anyone with breathing or heart problems",
+      insideTill: (who: string, hour: string) => `Keep ${who} inside till ${hour}.`,
+      insideToday: (who: string) => `Keep ${who} inside today.`,
+      dog: (n: number) => `Walk the ${n === 1 ? "dog" : "dogs"} at the best time, and keep it short.`,
+      bird: "Keep birds away from open windows and smoke.",
+      otherPets: "Keep other pets indoors.",
+    },
+  },
+  cigarettes: {
+    hero: (n: number) => `≈ ${n} ${n === 1 ? "cigarette" : "cigarettes"} if you're out all day`,
+    plain: (n: number) => `≈ ${n} ${n === 1 ? "cigarette" : "cigarettes"} if out all day`,
+  },
+  staleAir: (at: number) =>
+    `Last updated ${new Date(at).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" })}`,
+  airUnavailable: "Air data is unavailable right now.",
+  airLoading: "Getting the air…",
+  footprint: {
+    loading: "Adding it up…",
+    firstMonth: "Your first month: we're learning your routine.",
+    diff: (kg: number, less: boolean) => `${kg} kg ${less ? "less" : "more"}`,
+    thanLastMonth: "than this date last month.",
+    change: (kg: number, less: boolean) => `${less ? "↓" : "↑"} ${kg} kg vs last month`,
+    byDate: (kg: number) => `${kg} kg by this date`,
+  },
+  goToday: {
+    hero: (aqi: number) => `Cleanest window · AQI ${aqi}`,
+    plain: (aqi: number) => `Cleanest today · AQI ${aqi}`,
+  },
+  goTomorrow: (aqi: number) => `Tomorrow's cleanest · AQI ${aqi}`,
+  chartStart: pair("6a", "6 AM"),
+  chartEnd: pair("10p", "10 PM"),
+  youSave: "You save",
+  kgUnit: pair("kg + CO₂", "kg CO₂"),
+  inrUnit: pair("+ today", "today"),
+  costsMore: (inr: number) => `Costs about ₹${inr} more today`,
+  missionAccept: pair("Accept", "I'll do this"),
+  missionDone: pair("Done!", "Done ✓"),
+  missionLoading: "Picking today's mission…",
+  livesCount: {
+    hero: (safe: number) => `${safe} / 5 safe`,
+    plain: (safe: number) => `${safe} of 5 safe`,
+  },
+  hearts: (n: number) => (n === 1 ? "1 heart" : `${n} hearts`),
+  livesCost: ["Your usual routine will cost", "today."],
+  livesKeep: (n: number, walk: boolean, when: string, mode: Mode) =>
+    `${mode === "hero" ? "Shift" : "Move"} your ${walk ? "walk" : "time outside"} to ${when} and keep ${n} more.`,
+  livesSafe: "Your usual routine is safe today. Enjoy it.",
+  billTitle: pair("New month!", "New month."),
+  billText: pair("Snap your electricity bill. EDITH reads it.", "Add your electricity bill."),
+  billButton: pair("Snap", "Add"),
+  billSoon: "Reading bill photos is coming soon, so this one wasn't saved. We'll ask again next month.",
+  streak: {
+    hero: (n: number) => `${n}-day streak`,
+    plain: (n: number) => `${n}-day streak`,
+  },
+  streakSub: pair("4 taps · 30 sec", "4 questions · 30 sec"),
+  checkinButton: pair("Log today's Canon Event", "Do today's check-in"),
 };
