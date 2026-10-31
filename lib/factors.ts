@@ -8,10 +8,11 @@ import type { AqiCategory, Pollutant, TimeBlock, TravelMode, Fuel } from "./type
 // CEA CO2 Baseline Database v20.0 (Dec 2024), weighted average, 2023-24.
 export const GRID_KG_PER_KWH = 0.727;
 
-// Estimate: base use without AC or heating, scaled by home type. Gives 120 units a month for 4 people.
-// CSE, "Power Pangs": a typical Delhi home uses about 181 kWh a month, and about half as much in
-// winter as in summer, so roughly 120 outside the cooling season. Bills correct this per home.
-export const BASE_KWH = { fixed: 1, perPerson: 0.75 };
+// Estimate: household use before logged AC and heating, scaled by home type. Gives 180 units a month
+// for 4 people, matching CSE's typical Delhi home of about 181 kWh a month (household size assumed).
+// Other sources run from about 260 to over 500 units, so each home's bills correct this.
+// https://www.cseindia.org/cse-analysis-of-delhis-power-consumption-paints-a-dark-picture-5877
+export const BASE_KWH = { fixed: 2, perPerson: 1 };
 export const HOME_TYPE_MULTIPLIER = { flat: 1, house: 1.2, pg: 0.7 };
 
 // Placeholders: typical appliance draw.

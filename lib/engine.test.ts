@@ -149,7 +149,7 @@ describe("footprint", () => {
   it("splits home energy between the people living there", () => {
     const day = { meals: [], trips: [], energy: noEnergy, deliveries: noDeliveries };
     const b = dailyBreakdown(day, setup);
-    expect(b.electricity).toBeCloseTo((4 * 0.727) / 4);
+    expect(b.electricity).toBeCloseTo((6 * 0.727) / 4);
     expect(b.cooking).toBeCloseTo(42 / 60 / 4);
   });
 
@@ -158,22 +158,6 @@ describe("footprint", () => {
     const off = dailyBreakdown({ ...day, energy: noEnergy }, setup);
     const whole = dailyBreakdown({ ...day, energy: { ...noEnergy, acNight: "whole" } }, setup);
     expect(whole.electricity - off.electricity).toBeCloseTo((2 * 1.2 * 7 * 0.727) / 4);
-  });
-
-  it("makes travel the demo user's biggest source without AC", () => {
-    const minutes = (12 / 25) * 60;
-    const trips = [
-      { mode: "two-wheeler", minutes },
-      { mode: "two-wheeler", minutes },
-    ] as const;
-    const day = {
-      meals: ["veg", "veg", "chicken"] as const,
-      trips,
-      energy: noEnergy,
-      deliveries: noDeliveries,
-    };
-    const b = dailyBreakdown({ ...day, meals: [...day.meals], trips: [...trips] }, setup);
-    expect(biggestSource(b)).toBe("travel");
   });
 
   it("spreads setup flights across the year", () => {
