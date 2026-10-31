@@ -64,7 +64,7 @@ EDITH is being built in the open, step by step. This table is kept honest: the s
 | Footprint, AQI, lives and streak calculations, with automated tests | ✅ Built |
 | Sign-in, style picker and setup flow, in both modes | ✅ Built |
 | Guest mode, with data stored on the device | ✅ Built |
-| Google sign-in | ✅ Built, ⏳ being connected to a live Supabase project |
+| Google sign-in, with answers saved to Supabase | ✅ Built |
 | Home, daily check-in, Air today | ⏳ Designed, next to build |
 | My footprint, Progress, Family, EDITH assistant, Settings | ⏳ Designed, to build |
 | Reading bill photos with Gemini | ⏳ To build; setup asks for a rough amount for now |

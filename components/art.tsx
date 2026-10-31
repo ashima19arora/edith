@@ -5,7 +5,7 @@ const WEB_RAYS = [
 ];
 
 function strandDelay(index: number) {
-  return { animationDelay: `${index * 55}ms` };
+  return { animationDelay: `${index * 130}ms` };
 }
 
 export function CornerWeb() {
@@ -52,20 +52,42 @@ const BUILDINGS = [
   [0, 42, 34], [34, 24, 52], [62, 50, 40], [116, 16, 64], [146, 40, 46], [190, 26, 58],
   [220, 44, 36], [268, 30, 50], [302, 58, 44], [364, 26, 60], [394, 46, 38],
 ];
-const WINDOWS = [
-  [46, 42, "#FFE14D"], [62, 52, "#FFE14D"], [130, 36, "#FFE14D"], [162, 62, "#FFE14D"], [80, 72, "#3D7BFF"],
-  [204, 44, "#3D7BFF"], [236, 72, "#3D7BFF"], [282, 58, "#FFE14D"], [320, 72, "#FFE14D"], [378, 48, "#FFE14D"],
-  [410, 76, "#FFE14D"], [18, 74, "#FFE14D"],
-];
+const WINDOW_COLOURS = ["#FFE14D", "#FFE14D", "#FFE14D", "#3D7BFF"];
+
+// A fixed scatter of windows, so the skyline looks the same on every visit.
+const WINDOWS = BUILDINGS.flatMap(([x, width, top]) => {
+  const spots: { x: number; y: number }[] = [];
+  for (let wx = x + 5; wx + 4 <= x + width - 3; wx += 9) {
+    for (let wy = top + 6; wy + 4 <= 96; wy += 11) {
+      if ((wx * 7 + wy * 13) % 5 < 2) spots.push({ x: wx, y: wy });
+    }
+  }
+  return spots;
+}).map((spot, i) => ({
+  ...spot,
+  colour: WINDOW_COLOURS[i % WINDOW_COLOURS.length],
+  // Spread the switch-on order across the skyline rather than left to right.
+  delay: 1200 + ((i * 37) % 23) * 140,
+  twinkle: i % 6 === 0,
+}));
 
 export function Skyline() {
   return (
     <svg className="skyline" viewBox="0 0 440 100" preserveAspectRatio="none" aria-hidden="true">
       {BUILDINGS.map(([x, width, top]) => (
-        <rect key={x} x={x} y={top} width={width} height={100 - top} fill="#07050F" />
+        <rect key={x} className="building" x={x} y={top} width={width} height={100 - top} />
       ))}
-      {WINDOWS.map(([x, y, color]) => (
-        <rect key={`${x}-${y}`} x={x} y={y} width="4" height="4" fill={color as string} />
+      {WINDOWS.map(({ x, y, colour, delay, twinkle }) => (
+        <rect
+          key={`${x}-${y}`}
+          className={twinkle ? "city-window twinkle" : "city-window"}
+          x={x}
+          y={y}
+          width="4"
+          height="4"
+          fill={colour}
+          style={{ animationDelay: twinkle ? `${delay}ms, ${delay + 2000}ms` : `${delay}ms` }}
+        />
       ))}
     </svg>
   );
