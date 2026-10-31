@@ -517,7 +517,9 @@ function Finish({ answers, onEnter }: { answers: SetupAnswers; onEnter: () => vo
         </ul>
       </div>
       <footer className="screen-foot">
-        <button type="button" className="cta" onClick={onEnter}>{copy.button}</button>
+        <button type="button" className="cta" disabled={ticked < copy.ready.length} onClick={onEnter}>
+          {ticked < copy.ready.length ? copy.loading : copy.button}
+        </button>
       </footer>
     </main>
   );

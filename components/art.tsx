@@ -53,16 +53,16 @@ const BUILDINGS = [
   [220, 44, 36], [268, 30, 50], [302, 58, 44], [364, 26, 60], [394, 46, 38],
 ];
 const WINDOWS = [
-  [46, 42, "#ffdb43"], [62, 52, "#ffdb43"], [130, 36, "#ffdb43"], [162, 62, "#ffdb43"], [80, 72, "#3f73ff"],
-  [204, 44, "#3f73ff"], [236, 72, "#3f73ff"], [282, 58, "#ffdb43"], [320, 72, "#ffdb43"], [378, 48, "#ffdb43"],
-  [410, 76, "#ffdb43"], [18, 74, "#ffdb43"],
+  [46, 42, "#FFE14D"], [62, 52, "#FFE14D"], [130, 36, "#FFE14D"], [162, 62, "#FFE14D"], [80, 72, "#3D7BFF"],
+  [204, 44, "#3D7BFF"], [236, 72, "#3D7BFF"], [282, 58, "#FFE14D"], [320, 72, "#FFE14D"], [378, 48, "#FFE14D"],
+  [410, 76, "#FFE14D"], [18, 74, "#FFE14D"],
 ];
 
 export function Skyline() {
   return (
     <svg className="skyline" viewBox="0 0 440 100" preserveAspectRatio="none" aria-hidden="true">
       {BUILDINGS.map(([x, width, top]) => (
-        <rect key={x} x={x} y={top} width={width} height={100 - top} fill="#050412" />
+        <rect key={x} x={x} y={top} width={width} height={100 - top} fill="#07050F" />
       ))}
       {WINDOWS.map(([x, y, color]) => (
         <rect key={`${x}-${y}`} x={x} y={y} width="4" height="4" fill={color as string} />

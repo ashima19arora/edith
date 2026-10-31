@@ -194,6 +194,7 @@ export const FINISH = {
     readyTitle: "Your city is ready.",
     ready: ["Scanning the air on your street...", "Counting your collateral...", "Picking your first mission..."],
     button: "Enter the city",
+    loading: "Suiting up…",
     note: "",
   },
   plain: {
@@ -205,6 +206,7 @@ export const FINISH = {
     readyTitle: "Ready.",
     ready: ["Getting the air for your street", "Working out your footprint", "Choosing today's tip"],
     button: "Go to Home",
+    loading: "Getting ready…",
     note: "You can change these any time in Settings › My details.",
   },
 };
