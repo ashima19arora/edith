@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bangers, Comic_Neue, Inter, Silkscreen } from "next/font/google";
+import { Bangers, Comic_Neue, Inter, Silkscreen, Space_Mono } from "next/font/google";
 import { ServiceWorker } from "@/components/service-worker";
 import "./globals.css";
 
@@ -7,6 +7,7 @@ const comic = Bangers({ variable: "--font-comic", subsets: ["latin"], weight: "4
 const body = Inter({ variable: "--font-body", subsets: ["latin"] });
 const label = Comic_Neue({ variable: "--font-label", subsets: ["latin"], weight: "700" });
 const pixel = Silkscreen({ variable: "--font-pixel", subsets: ["latin"], weight: "400" });
+const mono = Space_Mono({ variable: "--font-mono", subsets: ["latin"], weight: "700" });
 
 export const metadata: Metadata = {
   title: "EDITH",
@@ -20,7 +21,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${comic.variable} ${body.variable} ${label.variable} ${pixel.variable} h-full antialiased`}>
+    <html lang="en" className={`${comic.variable} ${body.variable} ${label.variable} ${pixel.variable} ${mono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         {children}
         <ServiceWorker />

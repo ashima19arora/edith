@@ -279,8 +279,6 @@ export const LEGAL = {
   updated: "Last updated: 1 November 2026",
   contactPrefix: "Questions or requests:",
   email: "arora.19ashima@gmail.com",
-  about:
-    "EDITH is an India-first air quality and carbon footprint companion. It shows live air quality, the best time to go out, and your own footprint with ways to cut it.",
   privacyTitle: "Privacy Policy",
   termsTitle: "Terms of Use",
   privacy: [

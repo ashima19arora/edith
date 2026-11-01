@@ -52,9 +52,9 @@ The air damages your health. Your lifestyle damages the air. EDITH tracks both a
 
 <table>
   <tr>
-    <td align="center" width="33%"><img src="screenshots/feature-style.png" alt="Pick your style screen"><br><sub>Pick your style</sub></td>
-    <td align="center" width="33%"><img src="screenshots/feature-home-hero.jpg" alt="Home in Hero mode"><br><sub>Hero</sub></td>
-    <td align="center" width="33%"><img src="screenshots/feature-home-plain.jpg" alt="Home in Plain mode"><br><sub>Plain</sub></td>
+    <td align="center" width="33%"><img src="public/landing/feature-style.png" alt="Pick your style screen"><br><sub>Pick your style</sub></td>
+    <td align="center" width="33%"><img src="public/landing/feature-home-hero.jpg" alt="Home in Hero mode"><br><sub>Hero</sub></td>
+    <td align="center" width="33%"><img src="public/landing/feature-home-plain.jpg" alt="Home in Plain mode"><br><sub>Plain</sub></td>
   </tr>
 </table>
 
@@ -65,9 +65,9 @@ The air damages your health. Your lifestyle damages the air. EDITH tracks both a
     <td align="center" valign="top" width="33%"><b>See what really drives your footprint</b></td>
   </tr>
   <tr>
-    <td align="center"><img src="screenshots/feature-air.jpg" alt="Air today"></td>
-    <td align="center"><img src="screenshots/feature-checkin.jpg" alt="Daily check-in"></td>
-    <td align="center"><img src="screenshots/feature-footprint.jpg" alt="My footprint"></td>
+    <td align="center"><img src="public/landing/feature-air.jpg" alt="Air today"></td>
+    <td align="center"><img src="public/landing/feature-checkin.jpg" alt="Daily check-in"></td>
+    <td align="center"><img src="public/landing/feature-footprint.jpg" alt="My footprint"></td>
   </tr>
   <tr>
     <td align="center" valign="top"><b>A reason to come back tomorrow</b></td>
@@ -75,9 +75,9 @@ The air damages your health. Your lifestyle damages the air. EDITH tracks both a
     <td align="center" valign="top"><b>Ask it anything about your air</b></td>
   </tr>
   <tr>
-    <td align="center"><img src="screenshots/feature-ranks.jpg" alt="Ranks"></td>
-    <td align="center"><img src="screenshots/feature-family.jpg" alt="Family"></td>
-    <td align="center"><img src="screenshots/feature-assistant.jpg" alt="EDITH assistant"></td>
+    <td align="center"><img src="public/landing/feature-ranks.jpg" alt="Ranks"></td>
+    <td align="center"><img src="public/landing/feature-family.jpg" alt="Family"></td>
+    <td align="center"><img src="public/landing/feature-assistant.jpg" alt="EDITH assistant"></td>
   </tr>
 </table>
 
