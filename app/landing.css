@@ -248,7 +248,7 @@ html:has(.lp)::-webkit-scrollbar {
 .lp-hero {
   position: relative;
   overflow: hidden;
-  padding: calc(7.8vw + 34px) 0 13vw;
+  padding: calc(7.8vw + 16px) 0 13vw;
   background: linear-gradient(to bottom, #0b0920, #16123f 30%, #3a1f66 50%, #8e1b4e 64%, #c9234a 74%, #ff8a3d 84%, #ffb54d 92%, #120f3a);
 }
 
@@ -367,18 +367,18 @@ html:has(.lp)::-webkit-scrollbar {
 .lp-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   margin-top: 14px;
 }
 
 .lp-tags li {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 9px 14px;
+  gap: 6px;
+  padding: 6px 10px;
   background: rgb(8 6 17 / 0.55);
   border: 2px solid rgb(253 226 77 / 0.45);
-  font-size: 15px;
+  font-size: 13.5px;
   font-weight: 700;
 }
 
@@ -386,7 +386,7 @@ html:has(.lp)::-webkit-scrollbar {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  margin-top: 24px;
+  margin-top: 20px;
 }
 
 .lp-free {
@@ -1080,27 +1080,6 @@ html:has(.lp)::-webkit-scrollbar {
   letter-spacing: 1px;
 }
 
-.lp-footer-members {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  margin-top: 6px;
-  color: var(--soft);
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.lp-footer-members li + li::before {
-  content: "";
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  margin: 0 10px;
-  vertical-align: middle;
-  background: var(--yellow);
-  border-radius: 50%;
-}
-
 .lp-made {
   max-width: 1200px;
   margin: 28px auto 0;
@@ -1163,6 +1142,25 @@ html:has(.lp)::-webkit-scrollbar {
   50% { transform: translateY(-12px) rotate(var(--tilt, 0deg)); }
 }
 
+/* On laptops the whole hero fits the first screen, whatever the window's height. */
+@media (min-width: 1181px) {
+  .lp-hero-phones {
+    --mid: clamp(170px, calc((100dvh - 215px) * 0.46), 250px);
+    height: calc(var(--mid) * 2.2);
+  }
+
+  .lp-hp-mid {
+    width: var(--mid);
+    margin-left: calc(var(--mid) / -2);
+  }
+
+  .lp-hp-left,
+  .lp-hp-right {
+    top: calc(var(--mid) * 0.26);
+    width: calc(var(--mid) * 0.82);
+  }
+}
+
 /* Between phone and laptop: keep the links on one line */
 
 @media (max-width: 1180px) {
@@ -1179,6 +1177,11 @@ html:has(.lp)::-webkit-scrollbar {
   .lp-header-inner { justify-content: space-between; }
   .lp-brand { margin-right: auto; }
   .lp-hero-inner { grid-template-columns: 1fr; }
+  .lp-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .lp-stat { padding: 20px 16px; }
+  .lp-stat-number { font-size: 52px; letter-spacing: -2px; }
+  .lp-stat-number b { display: block; margin: 4px 0 0; font-size: 28px; }
+  .lp-styles { grid-template-columns: minmax(0, 1fr); gap: 30px; }
 }
 
 /* Phone */
@@ -1221,6 +1224,8 @@ html:has(.lp)::-webkit-scrollbar {
   .lp-section { padding: 26px 20px 44px; }
   .lp-stats-section { padding-top: 36px; }
   .lp-stats { grid-template-columns: 1fr; gap: 20px; }
+  .lp-stat { padding: 30px 30px 26px; }
+  .lp-stat-number b { display: inline; margin-left: 8px; font-size: 44px; }
   .lp-stat-number { font-size: 64px; }
   .lp-problem-lead { font-size: 22px; }
   .lp-points { grid-template-columns: 1fr; }
@@ -1258,7 +1263,6 @@ html:has(.lp)::-webkit-scrollbar {
   .lp-footer { padding: 40px 20px 32px; }
   .lp-footer-inner { flex-direction: column; }
   .lp-footer-right { align-items: flex-start; text-align: left; }
-  .lp-footer-members { justify-content: flex-start; }
   .lp .lp-footer-github { font-size: 14px; }
 }
 

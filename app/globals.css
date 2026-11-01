@@ -1907,46 +1907,6 @@ input[type="range"]::-moz-range-thumb {
   text-transform: uppercase;
 }
 
-@media (min-width: 900px) {
-  .app-nav {
-    top: 0;
-    bottom: auto;
-    left: calc(50% - 220px - 170px);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 170px;
-    height: 100dvh;
-    padding: 32px 10px;
-    border-top: 0;
-    border-right: 2px solid var(--bar-line);
-    transform: none;
-  }
-
-  .nav-item {
-    flex-direction: row;
-    gap: 10px;
-    padding: 8px;
-    text-align: left;
-  }
-
-  [data-mode="plain"] .app-nav {
-    padding-top: 32px;
-    border-top: 0;
-    border-right: 0.5px solid rgb(60 60 67 / 0.29);
-  }
-
-  [data-mode="plain"] .nav-item {
-    font-size: 15px;
-    gap: 10px;
-  }
-
-  .home,
-  .soon {
-    padding-bottom: 24px !important;
-  }
-}
-
 /* Home: shared structure */
 
 .home {
@@ -4660,12 +4620,6 @@ input[type="range"]::-moz-range-thumb {
 [data-mode="plain"] .calc-sources small {
   color: var(--plain-faint);
   font-size: 13px;
-}
-
-@media (min-width: 900px) {
-  .ranks {
-    padding-bottom: 24px !important;
-  }
 }
 
 /* Shared by Airspace, Canon Event and Collateral */
@@ -10102,5 +10056,246 @@ input[type="range"]::-moz-range-thumb {
 @keyframes scrim-in {
   from {
     background: transparent;
+  }
+}
+
+/* Desktop layout, 768px and up. Everything below 768px stays exactly as designed for phones. */
+
+@media (min-width: 768px) {
+  /* Single centred card: sign-in, style picker, setup, check-in flow, family setup screens */
+  .screen {
+    max-width: 480px;
+  }
+
+  /* Sidebar beside the content, centred together */
+  .app-frame {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    max-width: 1290px;
+  }
+
+  .app-frame .screen {
+    flex: 1;
+    min-width: 0;
+    max-width: 1100px;
+    min-height: 100dvh;
+  }
+
+  .app-nav,
+  [data-mode="plain"] .app-nav {
+    position: sticky;
+    top: 0;
+    bottom: auto;
+    left: auto;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 190px;
+    max-width: none;
+    height: 100dvh;
+    padding: 32px 10px;
+    border-top: 0;
+    transform: none;
+  }
+
+  .app-nav {
+    border-right: 2px solid var(--bar-line);
+  }
+
+  [data-mode="plain"] .app-nav {
+    border-right: 0.5px solid rgb(60 60 67 / 0.29);
+  }
+
+  .nav-item {
+    flex: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    font-size: 17px;
+    text-align: left;
+  }
+
+  [data-mode="plain"] .nav-item {
+    gap: 10px;
+    font-size: 15px;
+  }
+
+  /* The two-column pages */
+  .home,
+  .air,
+  .fp,
+  .ranks,
+  .hub,
+  .family:has(.fam-house),
+  [data-mode="plain"] .home,
+  [data-mode="plain"] .air,
+  [data-mode="plain"] .fp,
+  [data-mode="plain"] .ranks,
+  [data-mode="plain"] .hub {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    padding-bottom: 40px;
+  }
+
+  .family:has(.fam-house) {
+    max-width: 1100px;
+  }
+
+  .settings:not(.family),
+  .chat {
+    max-width: 720px;
+  }
+
+  .home-head,
+  .home-headline,
+  .home-alert,
+  .home-grid,
+  .page-head,
+  .air-updated,
+  .air-empty,
+  .ranks-error,
+  .settings-head,
+  .forecast-card,
+  .heat-card,
+  .badges-card,
+  .fp-trend,
+  .fp > .fp-switch,
+  .xp-section,
+  .fam-house,
+  .fam-alerts,
+  .fam-manage {
+    grid-column: 1 / -1;
+  }
+
+  /* Home: lives on the left, bill and check-in on the right */
+  .home-lives,
+  [data-mode="plain"] .home-lives {
+    grid-column: 1;
+    grid-row: span 2;
+    margin-top: 18px;
+  }
+
+  .home-bill,
+  .home-streak,
+  [data-mode="plain"] .home-bill,
+  [data-mode="plain"] .home-streak {
+    grid-column: 2;
+    margin-top: 18px;
+  }
+
+  .fp .home-bill,
+  .hub .home-bill,
+  [data-mode="plain"] .fp .home-bill,
+  [data-mode="plain"] .hub .home-bill {
+    grid-column: auto;
+    align-self: start;
+  }
+
+  /* Airspace: short cards pair up above the full-width forecast */
+  .air .now-card { order: 1; }
+  .air .history-card { order: 2; }
+  .air .forecast-card { order: 3; }
+  .air .damage-card { order: 4; }
+  .air .defence-card { order: 5; }
+  .air .weapons-card { order: 6; align-self: start; }
+  .air .why-section { order: 7; align-self: start; }
+
+  .history-days {
+    margin-top: 24px;
+  }
+
+  /* Collateral: pair the total with its perspective */
+  .fp .fp-total { order: 1; }
+  .fp .fp-perspective { order: 2; }
+  .fp .fp-report { order: 3; }
+  .fp .fp-cuts { order: 4; }
+  .fp .fp-trend { order: 5; }
+  .fp .home-bill { order: 6; }
+  .fp .why-section { order: 7; align-self: start; }
+
+  .fp:not(:has(.home-bill)) .why-section,
+  .hub:not(:has(.home-bill)):not(:has(.hub-bill-done)) .hub-oneoff {
+    grid-column: 1 / -1;
+  }
+
+  /* Ranks: pair the rank with the challenge above the full-width heatmap */
+  .ranks .rank-card { order: 1; }
+  .ranks .challenge-card { order: 2; }
+  .ranks .heat-card { order: 3; }
+  .ranks .badges-card { order: 4; }
+  .ranks .xp-section { order: 5; }
+
+  .heat-grid .cell {
+    height: 16px;
+  }
+
+  [data-mode="plain"] .heat-grid .cell {
+    height: 26px;
+    aspect-ratio: auto;
+  }
+
+  .why-section,
+  [data-mode="plain"] .why-section {
+    margin-top: 18px;
+  }
+
+  /* Airspace: damage runs full width, with its details side by side */
+  .damage-card {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+    align-content: start;
+  }
+
+  .damage-head {
+    grid-column: 1 / -1;
+  }
+
+  .damage-card .hearts,
+  .damage-rows {
+    grid-column: 1;
+  }
+
+  .ciggy-tiles,
+  .damage-card .damage-note {
+    grid-column: 2;
+  }
+
+  .ciggy-tiles {
+    grid-row: 2 / span 2;
+    margin-top: 12px;
+    align-self: start;
+  }
+
+  .ciggy-tiles + .damage-note {
+    grid-column: 1 / -1;
+  }
+
+  .air .why-section {
+    grid-column: 1 / -1;
+  }
+
+  /* The check-in tab's days must shrink to fit their column */
+  .hub-day {
+    min-width: 0;
+  }
+
+  .hub-day i {
+    min-height: 0;
+  }
+
+  .home-cta {
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .badges {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
