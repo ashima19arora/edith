@@ -98,6 +98,16 @@ The air damages your health. Your lifestyle damages the air. EDITH tracks both a
 
 These are estimates to help you plan, not measurements or medical advice. Some factors, such as deliveries and flights, are our own working estimates. All of them are labelled in [`lib/factors.ts`](lib/factors.ts).
 
+## Next up
+
+EDITH's next steps focus on two things: replacing estimates with real measurements, and making the daily habit take even less effort.
+
+- **Indoor air sensor.** A home-built ESP32 with a PM2.5 sensor costs about ₹1,000–1,500 and shows real indoor air and how much your purifier helps. Popular purifier brands have no official APIs, so a sensor of your own is more reliable than integrating with them.
+- **Smart plugs for the AC.** Plugs with energy monitoring give real kWh for the biggest appliance, which replaces the AC-hours estimate.
+- **Voice check-in.** Say "veg all day, Metro both ways, one Swiggy order" and EDITH fills in the steps.
+- **Daily reminder.** A phone notification when your air turns bad or check-in is due, through the installable app.
+- **Home-screen widget.** Today's AQI and Go Time without opening the app. This needs a native app.
+
 ## Tech stack
 
 <p>
