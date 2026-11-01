@@ -1,7 +1,7 @@
 // EDITH's service worker: makes the app installable and keeps the screens opening on a bad connection.
 // Live data (air, sign-in, your account) is never cached here.
 
-const CACHE = "edith-v1";
+const CACHE = "edith-v2";
 const START_PAGES = ["/app", "/app/sign-in"];
 
 self.addEventListener("install", (event) => {
