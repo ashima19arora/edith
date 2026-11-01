@@ -91,11 +91,12 @@ export interface Checkin {
   missionStatus: MissionStatus;
   co2Breakdown: Co2Breakdown;
   livesKept: number;
+  inGoTime?: boolean; // Outdoor time overlapped that day's Go Time
 }
 
 export interface OneOff {
   date: string;
-  kind: "flight" | "long-trip" | "purchase" | "guests";
+  kind: "flight" | "long-trip" | "purchase" | "guests" | "crackers";
   details: Record<string, unknown>;
   co2Kg: number;
 }

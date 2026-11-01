@@ -135,6 +135,12 @@ export const DELIVERY_KG = { food: 0.5, grocery: 0.3, parcel: 0.6 };
 
 export const FLIGHT_KG = { domestic: 300, international: 1500 };
 
+// Placeholders for one-offs, kg CO2. A one-way flight is half a round trip.
+export const LONG_TRIP_KG_PER_KM = { train: 0.03, bus: 0.05 };
+export const PURCHASE_KG = { small: 15, medium: 70, large: 300 };
+export const GUEST_KG_PER_PERSON = 1;
+export const CRACKERS_KG = 5;
+
 // Placeholder midpoints for the setup answer bands, in round trips a year.
 export const FLIGHT_BAND_TRIPS = {
   domestic: { "0": 0, "1-2": 1.5, "3-5": 4, "6+": 7 },

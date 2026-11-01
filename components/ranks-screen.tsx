@@ -6,10 +6,11 @@ import { LABELS, RANKS_TEXT as TEXT } from "@/lib/labels";
 import { XP, RANK_THRESHOLDS } from "@/lib/factors";
 import { currentStreak, longestStreak, rankFor } from "@/lib/progress";
 import { badgeStates, heatmap, weeklyChallenge, type BadgeId } from "@/lib/ranks";
+import { loadHousehold } from "@/lib/family-store";
 import { getAccount, storeFor } from "@/lib/storage";
 import { nowIST } from "@/lib/time";
 import { useMode } from "@/lib/theme";
-import type { Bill, Checkin, SetupAnswers } from "@/lib/types";
+import type { Bill, Checkin, OneOff, SetupAnswers } from "@/lib/types";
 import { AppShell } from "./app-shell";
 
 const ROOFS = [14, 26, 8, 20, 32, 12, 24, 10, 28, 16, 22, 30];
@@ -43,6 +44,8 @@ interface RankData {
   checkins: Checkin[];
   bills: Bill[];
   xp: number;
+  oneOffs: OneOff[];
+  hasSquad: boolean;
 }
 
 export function RanksScreen() {
@@ -57,14 +60,17 @@ export function RanksScreen() {
       const account = await getAccount();
       if (!account) return router.replace("/app/sign-in");
       const store = storeFor(account);
-      const [setup, checkins, bills, xp] = await Promise.all([
+      const [setup, checkins, bills, xp, oneOffs] = await Promise.all([
         store.getSetup(),
         store.getCheckins(),
         store.getBills(),
         store.getXp(),
+        store.getOneOffs(),
       ]);
+      const house = account.kind === "user" ? await loadHousehold(account.id, nowIST().date).catch(() => null) : null;
+      const hasSquad = !!house && house.members.length + house.profiles.length >= 2;
       if (!setup) return router.replace("/app/style");
-      setData({ setup, checkins, bills, xp });
+      setData({ setup, checkins, bills, xp, oneOffs, hasSquad });
     }
     load().catch(() => setFailed(true));
   }, [router]);
@@ -77,7 +83,7 @@ export function RanksScreen() {
   const longest = longestStreak(dates);
   const weeks = heatmap(data?.checkins ?? [], today);
   const challenge = data && weeklyChallenge(data.setup, data.checkins, today);
-  const badges = data ? badgeStates(data.setup, data.checkins, data.bills, false) : [];
+  const badges = data ? badgeStates(data.setup, data.checkins, data.bills, data.hasSquad, data.oneOffs, today) : [];
   const earnedCount = badges.filter((b) => b.earned).length;
 
   return (

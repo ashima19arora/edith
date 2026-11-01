@@ -1,15 +1,18 @@
 "use client";
 
-/* eslint-disable @next/next/no-html-link-for-pages, @next/next/no-location-assign-relative-destination --
+/* eslint-disable @next/next/no-location-assign-relative-destination --
    Editing a section uses full page loads so the form and Settings always start from the saved answers. */
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CHECK_SECTIONS, SECTION_NAMES, SETTINGS_TEXT as TEXT, RANKS_TEXT } from "@/lib/labels";
+import type { Household } from "@/lib/family";
+import { loadHousehold } from "@/lib/family-store";
 import { rankFor } from "@/lib/progress";
 import { detailLines } from "@/lib/setup";
 import { getAccount, signOut, storeFor, type Account, type Profile } from "@/lib/storage";
+import { nowIST } from "@/lib/time";
 import { setMode, ThemeRoot, useMode } from "@/lib/theme";
 import type { Mode, SetupAnswers } from "@/lib/types";
 import { BackIcon } from "./art";
@@ -37,6 +40,7 @@ export function SettingsScreen() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [setup, setSetup] = useState<SetupAnswers | null>(null);
   const [xp, setXp] = useState(0);
+  const [house, setHouse] = useState<Household | null>(null);
   const [access, setAccess] = useState<Access>("unknown");
   const [error, setError] = useState("");
 
@@ -50,6 +54,7 @@ export function SettingsScreen() {
       setProfile(foundProfile);
       setSetup(foundSetup);
       setXp(foundXp);
+      if (found.kind === "user") setHouse(await loadHousehold(found.id, nowIST().date).catch(() => null));
     }
     load().catch(() => setError(TEXT.loadFailed));
 
@@ -166,7 +171,13 @@ export function SettingsScreen() {
         <section className="group squad-group">
           <p className="group-label">{TEXT.squad[mode]}</p>
           <Link href={guest ? "/app/sign-in" : "/app/family"} className="row squad-row">
-            <span>{guest ? TEXT.squadGuest[mode] : TEXT.squadSetup[mode]}</span>
+            <span>
+              {guest
+                ? TEXT.squadGuest[mode]
+                : house
+                  ? TEXT.squadSummary(house.name, house.members.length + house.profiles.length)
+                  : TEXT.squadSetup[mode]}
+            </span>
             <Chevron />
           </Link>
         </section>

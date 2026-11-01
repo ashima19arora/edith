@@ -6,13 +6,11 @@ export const DIWALI = {
   showFrom: "2026-11-01",
   showUntil: "2026-11-12",
   year: 2026,
-  // Null means no confirmed rule is recorded yet, so the app sends people to the official source.
+  // Null means nothing confirmed yet, so the app shows nothing rather than guessing.
   firecrackers: null as string | null,
   permittedHours: null as string | null,
-  noticeUrl: "https://dpcc.delhi.gov.in",
-  greenDelhiUrl: "https://play.google.com/store/search?q=Green%20Delhi&c=apps",
+  noticeUrl: null as string | null,
   noisePortalUrl: "https://ngms.delhi.gov.in",
-  helpline: "155271",
   emergency: "112",
 };
 

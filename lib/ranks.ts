@@ -1,8 +1,9 @@
 // The logic behind Ranks / Progress, kept apart from the screen so it can be tested.
 
+import { DIWALI } from "@/config/diwali";
 import { ORDERS_BAND_PER_WEEK } from "./factors";
 import { longestStreak } from "./progress";
-import type { Bill, Checkin, SetupAnswers } from "./types";
+import type { Bill, Checkin, OneOff, SetupAnswers } from "./types";
 
 const DAY_MS = 86_400_000;
 
@@ -83,6 +84,8 @@ export function badgeStates(
   checkins: Checkin[],
   bills: Bill[],
   hasSquad: boolean,
+  oneOffs: OneOff[] = [],
+  today = "",
 ): BadgeState[] {
   const longest = longestStreak(checkins.map((c) => c.date));
   const fullWeeks = groupByWeek(checkins).filter((week) => week.length >= MIN_DAYS_FOR_A_WEEK);
@@ -97,6 +100,17 @@ export function badgeStates(
   const fewerDrops =
     usualOrders > 0 && fullWeeks.some((week) => week.reduce((sum, c) => sum + deliveries(c), 0) <= usualOrders / 2);
 
+  const escapes = checkins.filter((c) => c.inGoTime).length;
+
+  // Diwali week: the three days either side of Diwali, judged once it's over.
+  const weekFrom = addDays(DIWALI.date, -3);
+  const weekTo = addDays(DIWALI.date, 3);
+  const inWeek = (date: string) => date >= weekFrom && date <= weekTo;
+  const diyasOnly =
+    today > weekTo &&
+    checkins.filter((c) => inWeek(c.date)).length >= MIN_DAYS_FOR_A_WEEK &&
+    !oneOffs.some((o) => o.kind === "crackers" && inWeek(o.date));
+
   return [
     { id: "suit-up", earned: checkins.length > 0 },
     { id: "seven-day", earned: longest >= 7 },
@@ -104,9 +118,9 @@ export function badgeStates(
     { id: "rail-rider", earned: groupByWeek(checkins).some((week) => week.filter(usedMetro).length >= 3) },
     { id: "cool-head", earned: coolHead },
     { id: "fewer-drops", earned: fewerDrops, count: [fewerDrops ? 1 : 0, 1] },
-    { id: "diyas-only", earned: false },
+    { id: "diyas-only", earned: diyasOnly },
     { id: "assemble", earned: hasSquad },
     { id: "paper-trail", earned: bills.length >= 3, count: [Math.min(bills.length, 3), 3] },
-    { id: "clean-escape", earned: false, count: [0, 5] },
+    { id: "clean-escape", earned: escapes >= 5, count: [Math.min(escapes, 5), 5] },
   ];
 }

@@ -24,25 +24,10 @@ import { nowIST } from "@/lib/time";
 import { useMode } from "@/lib/theme";
 import type { Checkin, Mode, SetupAnswers } from "@/lib/types";
 import { AppShell } from "./app-shell";
+import { Heart } from "./heart";
 
 const SCALE: [string, number][] = [["a", 10], ["b", 10], ["c", 20], ["d", 20], ["e", 20], ["f", 20]];
 const slug = (category: string) => category.replace(" ", "-").toLowerCase();
-
-function Heart({ safe, mode }: { safe: boolean; mode: Mode }) {
-  if (mode === "plain") {
-    return (
-      <svg viewBox="0 0 24 24" className={`heart heart-plain ${safe ? "safe" : "risk"}`} aria-hidden="true">
-        <path d="M12 21s-8.5-5.3-10-10.700C1 6.6 3.5 3.5 7 3.500c2 0 3.8 1 5 2.8 1.2-1.8 3-2.8 5-2.8 3.5 0 6 3.1 5 6.800C20.5 15.7 12 21 12 21z" />
-      </svg>
-    );
-  }
-  return (
-    <svg viewBox="-0.5 -0.5 8 7" className={`heart heart-pixel ${safe ? "safe" : "risk"}`} aria-hidden="true">
-      <path d="M1 0H3V1H4V0H6V1H7V3H6V4H5V5H4V6H3V5H2V4H1V3H0V1H1Z" />
-      {safe && <rect x="1" y="1" width="1" height="1" fill="#FFB3C0" />}
-    </svg>
-  );
-}
 
 function Diya({ size }: { size: number }) {
   return (
@@ -89,12 +74,14 @@ function DiwaliSheet({ mode, onClose }: { mode: Mode; onClose: () => void }) {
           <button type="button" className="sheet-close" aria-label={text.close} onClick={onClose}><CloseIcon /></button>
         </header>
         <div className="sheet-body">
-          <div className="rules-card">
-            <p className="sheet-label">{text.rulesTitle(DIWALI.year)}</p>
-            <p className="rules-row"><span>{text.firecrackers}</span><b>{DIWALI.firecrackers ?? text.unconfirmed}</b></p>
-            <p className="rules-row"><span>{text.hours}</span><b>{DIWALI.permittedHours ?? text.unconfirmed}</b></p>
-            <a href={DIWALI.noticeUrl} target="_blank" rel="noopener noreferrer" className="rules-link">{text.readNotice} ↗</a>
-          </div>
+          {DIWALI.firecrackers && (
+            <div className="rules-card">
+              <p className="sheet-label">{text.rulesTitle(DIWALI.year)}</p>
+              <p className="rules-row"><span>{text.firecrackers}</span><b>{DIWALI.firecrackers}</b></p>
+              {DIWALI.permittedHours && <p className="rules-row"><span>{text.hours}</span><b>{DIWALI.permittedHours}</b></p>}
+              {DIWALI.noticeUrl && <a href={DIWALI.noticeUrl} target="_blank" rel="noopener noreferrer" className="rules-link">{text.readNotice} ↗</a>}
+            </div>
+          )}
 
           <div className="sheet-section">
             <p className="sheet-tag tag-red">{text.worstTitle}</p>
@@ -118,9 +105,7 @@ function DiwaliSheet({ mode, onClose }: { mode: Mode; onClose: () => void }) {
           <div className="sheet-section">
             <p className="sheet-tag tag-white">{text.reportTitle}</p>
             <div className="report-links">
-              <a href={DIWALI.greenDelhiUrl} target="_blank" rel="noopener noreferrer"><strong>{text.greenDelhi}</strong><small>{text.greenDelhiLine}</small></a>
               <a href={DIWALI.noisePortalUrl} target="_blank" rel="noopener noreferrer"><strong>{text.noise}</strong><small>ngms.delhi.gov.in</small></a>
-              <a href={`tel:${DIWALI.helpline}`}><strong>{text.helpline(DIWALI.helpline)}</strong><small>{text.helplineLine}</small></a>
             </div>
             <p className="sheet-note">{text.reportNote}</p>
           </div>

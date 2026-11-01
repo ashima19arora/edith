@@ -133,6 +133,7 @@ describe("airspace", () => {
     expect(isDiwaliSeason("2026-10-20")).toBe(false);
     expect(isDiwaliSeason("2026-11-20")).toBe(false);
     expect(DIWALI.firecrackers).toBeNull();
+    expect(DIWALI.noticeUrl).toBeNull();
   });
 });
 

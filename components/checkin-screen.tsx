@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { MISSIONS, type MissionContext } from "@/config/missions";
 import { loadAir, type AirData } from "@/lib/air";
-import { hourlyIndex } from "@/lib/aqi";
+import { headlineAqi, hourlyIndex } from "@/lib/aqi";
 import { blockHours } from "@/lib/lives";
 import {
   buildCheckin,
+  challengeXp,
   checkinSteps,
   currentCalibration,
   prefillCheckin,
@@ -17,12 +18,14 @@ import {
 import { SPEED_KMH } from "@/lib/factors";
 import { isWinter, totalKg } from "@/lib/footprint";
 import { CHECKIN_TEXT as TEXT, OPTIONS } from "@/lib/labels";
-import { currentStreak } from "@/lib/progress";
+import { canFillLate, currentStreak } from "@/lib/progress";
 import { getAccount, storeFor, type Account, type MissionEntry } from "@/lib/storage";
 import { nowIST } from "@/lib/time";
 import { ThemeRoot, useMode } from "@/lib/theme";
-import type { AqiCategory, Bill, Checkin, Meal, MissionStatus, Mode, SetupAnswers, TimeBlock, TravelMode, Trip } from "@/lib/types";
+import type { AqiCategory, Bill, Checkin, Meal, MissionStatus, SetupAnswers, TimeBlock, TravelMode, Trip } from "@/lib/types";
 import { BackIcon, SpiderIcon } from "./art";
+import { CheckinHub } from "./checkin-hub";
+import { Heart } from "./heart";
 
 const MEALS: Meal[] = ["veg", "veg-dairy", "egg", "chicken", "fish", "mutton", "skipped"];
 const MODES = Object.keys(OPTIONS.mode) as TravelMode[];
@@ -40,22 +43,6 @@ function blockCategory(block: TimeBlock, air: AirData | null, date: string): Aqi
   if (indexes.length === 0) return null;
   // The worst hour in the block, since that's the one to warn about
   return indexes.reduce((worst, r) => (r.aqi > worst.aqi ? r : worst)).category;
-}
-
-function Heart({ safe, mode }: { safe: boolean; mode: Mode }) {
-  if (mode === "plain") {
-    return (
-      <svg viewBox="0 0 24 24" className={`heart heart-plain ${safe ? "safe" : "risk"}`} aria-hidden="true">
-        <path d="M12 21s-8.5-5.3-10-10.700C1 6.6 3.5 3.5 7 3.500c2 0 3.8 1 5 2.8 1.2-1.8 3-2.8 5-2.8 3.5 0 6 3.1 5 6.800C20.5 15.7 12 21 12 21z" />
-      </svg>
-    );
-  }
-  return (
-    <svg viewBox="-0.5 -0.5 8 7" className={`heart heart-pixel ${safe ? "safe" : "risk"}`} aria-hidden="true">
-      <path d="M1 0H3V1H4V0H6V1H7V3H6V4H5V5H4V6H3V5H2V4H1V3H0V1H1Z" />
-      {safe && <rect x="1" y="1" width="1" height="1" fill="#FFB3C0" />}
-    </svg>
-  );
 }
 
 function Chips<T extends string>({ options, value, onChange, label, className = "" }: {
@@ -125,9 +112,19 @@ interface Loaded {
 }
 
 export function CheckinScreen() {
+  const params = useSearchParams();
+  const requested = params.get("date");
+  if (requested) return <FlowLoader key={requested} requested={requested} />;
+  return params.has("start") ? <FlowLoader key="today" /> : <CheckinHub />;
+}
+
+function FlowLoader({ requested }: { requested?: string }) {
   const router = useRouter();
   const [loaded, setLoaded] = useState<Loaded | null>(null);
-  const today = useMemo(() => nowIST(), []);
+  const today = useMemo(() => {
+    const now = nowIST();
+    return { ...now, date: requested && canFillLate(requested, now.date) ? requested : now.date };
+  }, [requested]);
 
   useEffect(() => {
     async function load() {
@@ -185,12 +182,18 @@ function CheckinFlow({ account, setup, checkins, bills, mission, air, date }: Lo
     try {
       const store = storeFor(account);
       const dayHours = air?.hours.filter((h) => h.time.startsWith(date)) ?? [];
-      const built = buildCheckin(draft, setup, date, dayHours, air?.aqi ?? null, status, currentCalibration(bills, checkins, setup));
+      const now = nowIST().date;
+      // A late fill is judged on that day's air, not today's.
+      const dayEnd = air ? air.hours.findIndex((h) => h.time === `${date}T23:00`) : -1;
+      const aqi = date === now ? air?.aqi ?? null : air && dayEnd >= 0 ? headlineAqi(air.hours, dayEnd)?.aqi ?? null : null;
+      const built = buildCheckin(draft, setup, date, dayHours, aqi, status, currentCalibration(bills, checkins, setup));
       await store.saveCheckin(built);
-      await store.addXp(xpForCheckin(built, checkins));
+      const all = [...checkins.filter((c) => c.date !== date), built];
+      const earned = await store.getXpKinds();
+      await store.addXp([...xpForCheckin(built, checkins), ...challengeXp(setup, all, now, earned)]);
       if (mission && status) await store.saveMission({ ...mission, status });
       const dates = [...checkins.filter((c) => c.date !== date).map((c) => c.date), date];
-      setDone({ checkin: built, streak: currentStreak(dates, date) });
+      setDone({ checkin: built, streak: currentStreak(dates, now) });
       window.scrollTo(0, 0);
     } catch {
       setError(TEXT.saveFailed);
@@ -265,7 +268,7 @@ function CheckinFlow({ account, setup, checkins, bills, mission, air, date }: Lo
           type="button"
           className="back-btn"
           aria-label={index === 0 ? TEXT.close : TEXT.back}
-          onClick={() => (index === 0 ? router.push("/app") : setIndex(index - 1))}
+          onClick={() => (index === 0 ? router.push("/app/checkin") : setIndex(index - 1))}
         >
           {mode === "hero" ? (
             index === 0 ? (

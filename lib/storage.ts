@@ -33,6 +33,8 @@ export interface Store {
   saveCheckin(checkin: Checkin): Promise<void>;
   addXp(events: XpEvent[]): Promise<void>;
   saveBill(bill: Bill): Promise<void>;
+  saveOneOff(oneOff: OneOff): Promise<void>;
+  getXpKinds(): Promise<string[]>;
 }
 
 export type Account = { kind: "user"; id: string; email: string | null } | { kind: "guest" };
@@ -101,6 +103,12 @@ const guestStore: Store = {
   async saveBill(bill) {
     localStorage.setItem(BILLS_KEY, JSON.stringify([...(readJson<Bill[]>(BILLS_KEY) ?? []), bill]));
   },
+  async saveOneOff(oneOff) {
+    localStorage.setItem(ONE_OFFS_KEY, JSON.stringify([...(readJson<OneOff[]>(ONE_OFFS_KEY) ?? []), oneOff]));
+  },
+  async getXpKinds() {
+    return (readJson<XpEvent[]>(XP_KEY) ?? []).map((event) => event.kind);
+  },
 };
 
 function userStore(id: string): Store {
@@ -158,6 +166,7 @@ function userStore(id: string): Store {
           missionStatus: row.mission_status,
           co2Breakdown: row.co2_breakdown as Co2Breakdown,
           livesKept: Number(row.lives_kept),
+          inGoTime: row.in_go_time,
         }),
       );
     },
@@ -228,6 +237,7 @@ function userStore(id: string): Store {
           mission_status: c.missionStatus,
           co2_breakdown: c.co2Breakdown,
           lives_kept: c.livesKept,
+          in_go_time: c.inGoTime ?? false,
         },
         { onConflict: "user_id,date" },
       );
@@ -237,6 +247,15 @@ function userStore(id: string): Store {
       if (events.length === 0) return;
       const { error } = await supabase.from("xp_events").insert(events.map((e) => ({ ...e, user_id: id })));
       if (error) throw error;
+    },
+    async saveOneOff(o) {
+      const { error } = await supabase.from("one_offs").insert({ user_id: id, date: o.date, kind: o.kind, details: o.details, co2_kg: o.co2Kg });
+      if (error) throw error;
+    },
+    async getXpKinds() {
+      const { data, error } = await supabase.from("xp_events").select("kind").eq("user_id", id);
+      if (error) throw error;
+      return (data ?? []).map((event) => event.kind);
     },
     async saveBill(bill) {
       const { error } = await supabase.from("bills").insert({
@@ -274,10 +293,21 @@ export async function adoptGuestData(account: Account): Promise<void> {
       for (const mission of readJson<MissionEntry[]>(MISSIONS_KEY) ?? []) await store.saveMission(mission);
       for (const checkin of readJson<Checkin[]>(CHECKINS_KEY) ?? []) await store.saveCheckin(checkin);
       for (const bill of readJson<Bill[]>(BILLS_KEY) ?? []) await store.saveBill(bill);
+      for (const oneOff of readJson<OneOff[]>(ONE_OFFS_KEY) ?? []) await store.saveOneOff(oneOff);
       await store.addXp(readJson<XpEvent[]>(XP_KEY) ?? []);
     }
   }
   localStorage.removeItem(GUEST_KEY);
+}
+
+export async function signInWithGoogle(): Promise<void> {
+  const supabase = createClient();
+  if (!supabase) throw new Error("Supabase is not configured");
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: `${window.location.origin}/auth/callback` },
+  });
+  if (error) throw error;
 }
 
 export async function signOut(): Promise<void> {

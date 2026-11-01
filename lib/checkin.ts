@@ -1,11 +1,21 @@
 // The logic behind Canon Event / Check-in.
 
-import { categoryFor } from "./aqi";
-import { GRID_KG_PER_KWH, XP } from "./factors";
+import { categoryFor, goTime } from "./aqi";
+import {
+  CRACKERS_KG,
+  FLIGHT_KG,
+  GRID_KG_PER_KWH,
+  GUEST_KG_PER_PERSON,
+  LONG_TRIP_KG_PER_KM,
+  PURCHASE_KG,
+  TIME_BLOCK_HOURS,
+  XP,
+} from "./factors";
 import { billForMonth, dailyBreakdown, isWinter, nextCalibration } from "./footprint";
 import { typicalDay } from "./home";
 import { livesLost, livesKept } from "./lives";
 import { currentStreak } from "./progress";
+import { weekStart, weeklyChallenge } from "./ranks";
 import type {
   Bill,
   Checkin,
@@ -73,6 +83,18 @@ export function prefillCheckin(setup: SetupAnswers, checkins: Checkin[], date: s
   };
 }
 
+// Blocks are a few hours long, so this counts any overlap with the day's cleanest window.
+export function wentOutInGoTime(blocks: TimeBlock[], day: HourlyAir[], date: string): boolean {
+  const window = goTime(day, date);
+  if (!window) return false;
+  const start = Number(window.start.slice(11, 13));
+  const end = Number(window.end.slice(11, 13));
+  return blocks.some((block) => {
+    const [from, to] = TIME_BLOCK_HOURS[block];
+    return from <= end && to > start;
+  });
+}
+
 export function buildCheckin(
   draft: CheckinDraft,
   setup: SetupAnswers,
@@ -89,6 +111,7 @@ export function buildCheckin(
     missionStatus,
     co2Breakdown: dailyBreakdown(draft, setup, calibration),
     livesKept: livesKept(lost),
+    inGoTime: wentOutInGoTime(draft.outdoorBlocks, day, date),
   };
 }
 
@@ -113,6 +136,36 @@ export function xpForCheckin(checkin: Checkin, previous: Checkin[]): XpEvent[] {
   if (streak === 7) events.push({ date, kind: "streak7", xp: XP.streak7 });
   if (streak === 30) events.push({ date, kind: "streak30", xp: XP.streak30 });
   return events;
+}
+
+// The weekly challenge's reward, once per week.
+export function challengeXp(setup: SetupAnswers, checkins: Checkin[], today: string, earned: string[]): XpEvent[] {
+  const challenge = weeklyChallenge(setup, checkins, today);
+  const kind = `challenge-${weekStart(today)}`;
+  if (challenge.done < challenge.target || earned.includes(kind)) return [];
+  return [{ date: today, kind, xp: XP.weeklyChallenge }];
+}
+
+export type OneOffInput =
+  | { kind: "flight"; route: "domestic" | "international"; trip: "one-way" | "return" }
+  | { kind: "long-trip"; mode: "train" | "bus"; km: number }
+  | { kind: "purchase"; size: "small" | "medium" | "large" }
+  | { kind: "guests"; people: number }
+  | { kind: "crackers" };
+
+export function oneOffKg(input: OneOffInput): number {
+  switch (input.kind) {
+    case "flight":
+      return FLIGHT_KG[input.route] * (input.trip === "return" ? 1 : 0.5);
+    case "long-trip":
+      return LONG_TRIP_KG_PER_KM[input.mode] * input.km;
+    case "purchase":
+      return PURCHASE_KG[input.size];
+    case "guests":
+      return GUEST_KG_PER_PERSON * input.people;
+    case "crackers":
+      return CRACKERS_KG;
+  }
 }
 
 const MIN_LOGGED_DAYS = 5;
