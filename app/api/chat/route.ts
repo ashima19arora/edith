@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+const TIME_LIMIT_MS = 25000; // The caller's fallback is better than a long wait
 const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 const MAX_QUESTION = 500;
 const MAX_CONTEXT = 6000;
@@ -32,6 +33,7 @@ export async function POST(request: NextRequest) {
     const response = await fetch(`${GEMINI_URL}/${encodeURIComponent(model)}:generateContent`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+      signal: AbortSignal.timeout(TIME_LIMIT_MS),
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: INSTRUCTIONS }] },
         contents: [{ parts: [{ text: `DATA: ${context}\nHISTORY: ${JSON.stringify(earlier)}\nQUESTION: ${question}` }] }],
@@ -48,7 +50,8 @@ export async function POST(request: NextRequest) {
       card: CARDS.includes(answer.card as string) && answer.card !== "none" ? answer.card : undefined,
       health: answer.health === true,
     });
-  } catch {
+  } catch (error) {
+    console.error("Gemini chat failed:", error instanceof Error ? error.message : error);
     return NextResponse.json({ error: "AI unavailable" }, { status: 503 });
   }
 }

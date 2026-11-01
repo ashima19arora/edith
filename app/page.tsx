@@ -298,7 +298,6 @@ export default function Landing() {
           <div className="lp-footer-right">
             <a href={T.githubHref} target="_blank" rel="noopener noreferrer" className="lp-footer-github"><GithubIcon />{T.footer.githubLabel}</a>
             <p className="lp-footer-team">{T.footer.team}</p>
-            <ul className="lp-footer-members">{T.footer.members.map((name) => <li key={name}>{name}</li>)}</ul>
           </div>
         </div>
         <p className="lp-made">{T.footer.made[0]} <span aria-label="love">♥</span> {T.footer.made[1]}</p>

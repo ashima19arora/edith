@@ -129,7 +129,6 @@ export const LANDING = {
   footer: {
     githubLabel: "github.com/ashima19arora/edith",
     team: "Team Felix Felicis",
-    members: ["Rahul Kumar", "Kriti Gupta", "Diwakar Mishra", "Ashima Arora"],
     privacy: "Privacy Policy",
     terms: "Terms of Use",
     made: ["Made with", "for India"],

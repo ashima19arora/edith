@@ -48,6 +48,7 @@ async function loadMissionId(context: MissionContext, date: string): Promise<str
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ candidates, biggest: pick.sector }),
+      signal: AbortSignal.timeout(6000),
     });
     if (response.ok) id = ((await response.json()) as { id: string }).id;
   } catch {

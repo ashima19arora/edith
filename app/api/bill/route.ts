@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+const TIME_LIMIT_MS = 30000; // The caller's fallback is better than a long wait
 const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 const MAX_BASE64 = 4_000_000; // About 3 MB of image, under Vercel's request limit
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -28,6 +29,7 @@ export async function POST(request: NextRequest) {
     const response = await fetch(`${GEMINI_URL}/${encodeURIComponent(model)}:generateContent`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+      signal: AbortSignal.timeout(TIME_LIMIT_MS),
       body: JSON.stringify({
         contents: [{ parts: [{ text: PROMPT }, { inlineData: { mimeType: mime, data: image } }] }],
         generationConfig: { responseMimeType: "application/json" },
@@ -47,7 +49,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Couldn't read the bill" }, { status: 422 });
     }
     return NextResponse.json({ units, periodStart: reply.period_start, periodEnd: reply.period_end });
-  } catch {
+  } catch (error) {
+    console.error("Gemini bill failed:", error instanceof Error ? error.message : error);
     return NextResponse.json({ error: "AI unavailable" }, { status: 503 });
   }
 }
