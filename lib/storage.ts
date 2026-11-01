@@ -1,7 +1,8 @@
 // One storage interface: guests use localStorage, signed-in users use Supabase. UI code doesn't care which.
 
 import { createClient } from "./supabase/client";
-import type { Bill, Checkin, Co2Breakdown, Mode, OneOff, SetupAnswers } from "./types";
+import type { XpEvent } from "./checkin";
+import type { Bill, Checkin, Co2Breakdown, MissionStatus, Mode, OneOff, SetupAnswers } from "./types";
 
 export interface Profile {
   displayName: string | null;
@@ -15,6 +16,7 @@ export interface MissionEntry {
   accepted: boolean;
   savedKg: number;
   savedInr: number;
+  status?: MissionStatus;
 }
 
 export interface Store {
@@ -28,6 +30,9 @@ export interface Store {
   getMission(date: string): Promise<MissionEntry | null>;
   saveMission(entry: MissionEntry): Promise<void>;
   getXp(): Promise<number>;
+  saveCheckin(checkin: Checkin): Promise<void>;
+  addXp(events: XpEvent[]): Promise<void>;
+  saveBill(bill: Bill): Promise<void>;
 }
 
 export type Account = { kind: "user"; id: string; email: string | null } | { kind: "guest" };
@@ -78,13 +83,23 @@ const guestStore: Store = {
     return (readJson<MissionEntry[]>(MISSIONS_KEY) ?? []).find((m) => m.date === date && m.accepted) ?? null;
   },
   async saveMission(entry) {
-    const others = (readJson<MissionEntry[]>(MISSIONS_KEY) ?? []).filter(
-      (m) => !(m.date === entry.date && m.missionId === entry.missionId),
-    );
+    const others = (readJson<MissionEntry[]>(MISSIONS_KEY) ?? [])
+      .filter((m) => !(m.date === entry.date && m.missionId === entry.missionId))
+      .map((m) => (entry.accepted && m.date === entry.date ? { ...m, accepted: false } : m));
     localStorage.setItem(MISSIONS_KEY, JSON.stringify([...others, entry]));
   },
   async getXp() {
     return (readJson<{ xp: number }[]>(XP_KEY) ?? []).reduce((sum, event) => sum + event.xp, 0);
+  },
+  async saveCheckin(checkin) {
+    const others = (readJson<Checkin[]>(CHECKINS_KEY) ?? []).filter((c) => c.date !== checkin.date);
+    localStorage.setItem(CHECKINS_KEY, JSON.stringify([...others, checkin]));
+  },
+  async addXp(events) {
+    localStorage.setItem(XP_KEY, JSON.stringify([...(readJson<XpEvent[]>(XP_KEY) ?? []), ...events]));
+  },
+  async saveBill(bill) {
+    localStorage.setItem(BILLS_KEY, JSON.stringify([...(readJson<Bill[]>(BILLS_KEY) ?? []), bill]));
   },
 };
 
@@ -172,6 +187,15 @@ function userStore(id: string): Store {
       return { date, missionId: data.mission_id, accepted: data.accepted, savedKg: Number(data.saved_kg), savedInr: Number(data.saved_inr) };
     },
     async saveMission(entry) {
+      if (entry.accepted) {
+        const { error: clearError } = await supabase
+          .from("missions_log")
+          .update({ accepted: false })
+          .eq("user_id", id)
+          .eq("date", entry.date)
+          .neq("mission_id", entry.missionId);
+        if (clearError) throw clearError;
+      }
       const { error } = await supabase.from("missions_log").upsert(
         {
           user_id: id,
@@ -180,6 +204,7 @@ function userStore(id: string): Store {
           accepted: entry.accepted,
           saved_kg: entry.savedKg,
           saved_inr: entry.savedInr,
+          status: entry.status ?? null,
         },
         { onConflict: "user_id,date,mission_id" },
       );
@@ -189,6 +214,39 @@ function userStore(id: string): Store {
       const { data, error } = await supabase.from("xp_events").select("xp").eq("user_id", id);
       if (error) throw error;
       return (data ?? []).reduce((sum, event) => sum + event.xp, 0);
+    },
+    async saveCheckin(c) {
+      const { error } = await supabase.from("checkins").upsert(
+        {
+          user_id: id,
+          date: c.date,
+          meals: c.meals,
+          trips: c.trips,
+          energy: c.energy,
+          deliveries: c.deliveries,
+          outdoor_blocks: c.outdoorBlocks,
+          mission_status: c.missionStatus,
+          co2_breakdown: c.co2Breakdown,
+          lives_kept: c.livesKept,
+        },
+        { onConflict: "user_id,date" },
+      );
+      if (error) throw error;
+    },
+    async addXp(events) {
+      if (events.length === 0) return;
+      const { error } = await supabase.from("xp_events").insert(events.map((e) => ({ ...e, user_id: id })));
+      if (error) throw error;
+    },
+    async saveBill(bill) {
+      const { error } = await supabase.from("bills").insert({
+        user_id: id,
+        period_start: bill.periodStart,
+        period_end: bill.periodEnd,
+        units: bill.units,
+        source: bill.source,
+      });
+      if (error) throw error;
     },
   };
 }
@@ -214,6 +272,9 @@ export async function adoptGuestData(account: Account): Promise<void> {
       await store.saveSetup(setup);
       await store.saveProfile({ mode: guest.mode, onboarded: true });
       for (const mission of readJson<MissionEntry[]>(MISSIONS_KEY) ?? []) await store.saveMission(mission);
+      for (const checkin of readJson<Checkin[]>(CHECKINS_KEY) ?? []) await store.saveCheckin(checkin);
+      for (const bill of readJson<Bill[]>(BILLS_KEY) ?? []) await store.saveBill(bill);
+      await store.addXp(readJson<XpEvent[]>(XP_KEY) ?? []);
     }
   }
   localStorage.removeItem(GUEST_KEY);

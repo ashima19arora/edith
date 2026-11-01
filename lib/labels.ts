@@ -177,7 +177,7 @@ export const SETUP_TEXT = {
   acHours: "Hours a day in summer",
   cylinder: "One cylinder lasts about",
   snap: "Snap your bill",
-  snapSoon: "Reading bill photos is coming soon. Pick a rough amount for now.",
+  snapSoon: "You can add the bill itself from My Footprint after setup. Pick a rough amount for now.",
   noBill: "No bill handy? Pick a rough monthly amount",
   howOften: "How often?",
   domestic: "Domestic round trips",
@@ -306,7 +306,7 @@ export const LEGAL = {
     },
     {
       heading: "Services that handle data for us",
-      body: "Supabase stores accounts and signed-in data. Vercel hosts the app. Google provides sign-in. Open-Meteo receives place names you search for, and coordinates, to return air quality and locations. If road distance is turned on, Google Maps receives your base location and the address you type. If AI suggestions are turned on, Google Gemini receives your biggest footprint source and a list of possible daily tips, with no name or contact details, to choose today's tip. If you use location access, your browser asks your permission first.",
+      body: "Supabase stores accounts and signed-in data. Vercel hosts the app. Google provides sign-in. Open-Meteo receives place names you search for, and coordinates, to return air quality and locations. If road distance is turned on, Google Maps receives your base location and the address you type. If AI features are turned on, Google Gemini receives your biggest footprint source and a list of possible daily tips, with no name or contact details, to choose today's tip, and any electricity bill photo you choose to upload, so it can read the units and dates. We don't store the photo, only those details. A bill photo can show your name and address, so crop it if you prefer. If you use location access, your browser asks your permission first.",
     },
     {
       heading: "Keeping and deleting your data",
@@ -318,7 +318,7 @@ export const LEGAL = {
     },
     {
       heading: "Changes",
-      body: "As features are added we'll update this page and the date above. Features that use new data, such as reading bill photos or the EDITH assistant, will be described here before they go live.",
+      body: "As features are added we'll update this page and the date above. Features that use new data, such as the EDITH assistant, will be described here before they go live.",
     },
   ],
   terms: [
@@ -354,9 +354,6 @@ export const NAV = {
 };
 
 export const COMING_SOON = {
-  air: { title: LABELS.airTab, nav: "air" },
-  checkin: { title: LABELS.checkinTab, nav: "checkin" },
-  footprint: { title: LABELS.footprintTab, nav: "footprint" },
   family: { title: LABELS.family, nav: null },
   assistant: { title: LABELS.assistant, nav: null },
 } as const;
@@ -472,7 +469,6 @@ export const HOME_TEXT = {
   billTitle: pair("New month!", "New month."),
   billText: pair("Snap your electricity bill. EDITH reads it.", "Add your electricity bill."),
   billButton: pair("Snap", "Add"),
-  billSoon: "Reading bill photos is coming soon, so this one wasn't saved. We'll ask again next month.",
   streak: {
     hero: (n: number) => `${n}-day streak`,
     plain: (n: number) => `${n}-day streak`,
@@ -620,7 +616,7 @@ export const CALCULATE = {
       points: [
         "During the month, electricity is an estimate from your household and appliances. It starts at about 180 units a month for 4 people, near a typical Delhi home.",
         "Your bill arrives after the month ends, so it can correct that month's estimate and improve later ones.",
-        "Reading bill photos is coming soon.",
+        "Add a bill by photo, or type the units yourself.",
       ],
     },
     {
@@ -660,3 +656,306 @@ export const CALCULATE = {
   ] as const,
 };
 
+
+const hour12 = (h: number) => `${h % 12 === 0 ? 12 : h % 12}${h < 12 ? "A" : "P"}`;
+const monthName = (month: string, style: "long" | "short") =>
+  new Date(`${month}-01T00:00:00Z`).toLocaleDateString("en-IN", { month: style, timeZone: "UTC" });
+const quarters = (n: number) => {
+  const whole = Math.floor(n);
+  const part = n - whole;
+  const mark = part >= 0.75 ? "¾" : part >= 0.5 ? "½" : part >= 0.25 ? "¼" : "";
+  return `${whole > 0 || !mark ? whole : ""}${mark}`;
+};
+
+export const BILL_TEXT = {
+  title: pair("Got last month's bill?", "Got last month's bill?"),
+  text: pair("Snap it to make your numbers exact.", "Add it to make your numbers exact."),
+  button: pair("Snap", "Add"),
+  reading: "Reading…",
+  readFailed: "We couldn't read that photo. Type the units from your bill instead.",
+  saveFailed: "Couldn't save your bill. Check your connection and try again.",
+  badUnits: "Enter the units as a number, like 320.",
+  unitsPlaceholder: "Units used, e.g. 320",
+  saveButton: "Save",
+  readTag: "Bill read ✓",
+  readUnits: (units: number, month: string) => `${units} units in ${monthName(month, "long")}`,
+  readNote: (estimate: number) => `Our estimate was ${estimate}, so we've updated that month and tuned your future estimates.`,
+};
+
+export const AIR_TEXT = {
+  yourLocation: "Your location",
+  diwaliButton: "Diwali",
+  updated: (at: number) =>
+    `Updated ${new Date(at).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" })}`,
+  refresh: "Refresh",
+  loading: "Getting the air…",
+  unavailable: "Air data is unavailable right now. Tap refresh to try again.",
+  nowTag: pair("Threat · AQI now", "Air now"),
+  mostly: (name: string) => `Mostly ${name}`,
+  next24: " · next 24 hrs",
+  worstLabel: "Worst",
+  goIsTomorrow: "Today's clean hours have passed, so this is tomorrow's best time.",
+  hourShort: hour12,
+  tomorrow: "Tomorrow",
+  tomorrowLine: (category: string, best: string | null) => (best ? `${category} overall · best ${best}` : `${category} overall`),
+  today: " today",
+  livesCount: {
+    hero: (n: number) => `${n} / 5 lives`,
+    plain: (n: number) => `Lung Health ${n} of 5`,
+  },
+  blockName: (block: keyof typeof OPTIONS.outdoor) => OPTIONS.outdoor[block].split(" · ")[0],
+  blockTime: (block: keyof typeof OPTIONS.outdoor) => OPTIONS.outdoor[block].split(" · ")[1] ?? "",
+  planned: " · planned",
+  cost: {
+    hero: (n: number) => (n === 0 ? "No loss" : `−${quarters(n)} ${n > 1 ? "lives" : "life"}`),
+    plain: (n: number) => (n === 0 ? "No loss" : `−${quarters(n)} ${n > 1 ? "hearts" : "heart"}`),
+  },
+  indoorsAllDay: "You're mostly indoors today, so you're breathing less of it.",
+  soFar: "Your day so far",
+  allDay: "If out all day",
+  cigarettesWord: (n: number) => (n === 1 ? "cigarette" : "cigarettes"),
+  saved: (n: number) => `Your routine has saved you about ${n} ${n === 1 ? "cigarette's" : "cigarettes'"} worth so far.`,
+  wouldSave: {
+    hero: (when: string, n: number, walk: boolean) => `Moving your ${walk ? "walk" : "time outside"} to ${when} would save ${n} more ${n === 1 ? "life" : "lives"}.`,
+    plain: (when: string, n: number, walk: boolean) => `Moving your ${walk ? "walk" : "time outside"} to ${when} would save ${n} more ${n === 1 ? "heart" : "hearts"}.`,
+  },
+  forAir: {
+    hero: (category: string) => ` · for ${category} air`,
+    plain: () => " today",
+  },
+  tipTag: { family: "Your family", pet: "Your pet" },
+  tips: {
+    n95: "Wear an N95 outside. A cloth mask won't stop PM2.5.",
+    windowsTill: (when: string) => `Keep windows shut for now, then air the house at ${when}.`,
+    windowsShut: "Keep windows shut as much as you can today.",
+    purifierOn: "Run the purifier in the room you use most.",
+    cleanRoom: "Keep one room closed up, with doors and windows shut, as your clean room.",
+    skipExercise: "Skip outdoor exercise today.",
+    family: (when: string | null) => (when ? `Keep the people at home who need extra care inside until ${when}.` : "Keep the people at home who need extra care inside today."),
+    sensitive: "If anyone has breathing trouble, keep their time outside short.",
+    moderateOutdoors: (when: string | null) => (when ? `Save long walks for ${when}, when the air is cleanest.` : "Keep long walks short today."),
+    cleanWindows: "Good time to open the windows.",
+    cleanOutside: "Enjoy being outside today.",
+    dog: (n: number, when: string) => `Walk your ${n === 1 ? "dog" : "dogs"} during ${when}, and keep it short.`,
+    bird: "Keep birds away from open windows and smoke.",
+    otherPets: "Keep other pets indoors.",
+  },
+  pollutantCount: {
+    hero: (n: number, top: string) => `${n} pollutants · ${top} is leading the attack`,
+    plain: (n: number, top: string) => `${n} pollutants · ${top} is the main one`,
+  },
+  concentration: (value: number, id: string) =>
+    id === "co" ? `${value.toFixed(1)} mg/m³` : `${Math.round(value)} µg/m³`,
+  pollutants: {
+    pm25: { name: "PM2.5", plain: "Tiny dust and smoke particles that go deep into your lungs." },
+    pm10: { name: "PM10", plain: "Coarser dust from roads and construction that irritates your nose and throat." },
+    no2: { name: "NO₂", plain: "A gas mostly from traffic that inflames your airways." },
+    o3: { name: "O₃", plain: "Ground-level ozone, formed in sunlight, that makes breathing harder." },
+    co: { name: "CO", plain: "A gas from burning fuel that cuts how much oxygen your blood carries." },
+    so2: { name: "SO₂", plain: "A gas from burning coal and fuel that irritates your lungs." },
+  },
+  dayName: (date: string) =>
+    new Date(`${date}T00:00:00Z`).toLocaleDateString("en-IN", { weekday: "short", timeZone: "UTC" }),
+  trend: {
+    worse: "This week was worse than last week.",
+    better: "This week was better than last week.",
+    same: "This week was about the same as last week.",
+  },
+  whyTitle: "Why is our number different from other apps?",
+  whyAnswer: "Many apps show the US AQI. EDITH uses India's official CPCB scale, so the number and category may differ from other apps. Our readings come from modelled data, so they can also differ from a nearby monitoring station.",
+  diwali: {
+    close: "Close",
+    rulesTitle: (year: number) => `Cracker rules in your area · ${year}`,
+    firecrackers: "Firecrackers",
+    hours: "Permitted hours",
+    unconfirmed: "Check the official notice",
+    readNotice: "Read official notice",
+    worstTitle: "When it'll be worst",
+    worst: "Festival nights are usually worst after 8 PM, and the next morning stays heavy.",
+    familyTitle: "Protect your family",
+    family: [
+      "Close all windows before evening.",
+      "Make one clean room, with the purifier running if you have one.",
+      "Keep elders, kids and anyone with breathing issues in that room.",
+      "Wear an N95 if you have to step out.",
+    ],
+    emergency: "Trouble breathing or chest pain? Get medical help now.",
+    call: (number: string) => `Call ${number}`,
+    petsTitle: "Protect your pets",
+    pets: [
+      "Keep them in a quiet inner room with windows closed.",
+      "Make sure dogs and cats wear an ID tag. Loud noise makes them bolt.",
+      "Keep birds well away from smoke.",
+    ],
+    reportTitle: "Report a violation",
+    greenDelhi: "Green Delhi app",
+    greenDelhiLine: "Send a photo or video with location",
+    noise: "Noise pollution portal",
+    helpline: (number: string) => `Helpline ${number}`,
+    helplineLine: "Tap to call",
+    reportNote: "Report without confronting anyone.",
+  },
+};
+
+export const CHECKIN_TEXT = {
+  title: pair("Today's Canon Event", "Daily check-in"),
+  close: "Close",
+  back: "Back",
+  count: {
+    hero: (n: number, total: number, name: string) => `${n} / ${total} · ${name}`,
+    plain: (n: number, total: number) => `${n} of ${total}`,
+  },
+  stepNames: { meals: "Meals", travel: "Travel", energy: "Energy", deliveries: "Deliveries", outdoors: "Outdoors", mission: "Mission" },
+  intro: "Every small choice today is a canon event in your city's story.",
+  saveFailed: "Couldn't save your check-in. Check your connection and try again.",
+  steps: {
+    meals: { question: pair("What did you eat today?", "What did you eat today?"), hint: pair("We filled in your usual. Tap a row to change it.", "We've filled in your usual. Tap anything that was different."), hintEmpty: undefined },
+    travel: {
+      question: pair("Where did you swing today?", "How did you travel today?"),
+      hint: pair("Your usual trips. Tap one to edit, or add one.", "Your usual trips are filled in. Tap one to edit it."),
+      hintEmpty: pair("Not a usual travel day. Add any trips you made.", "Not one of your usual travel days. Add any trips you made."),
+    },
+    energy: { question: pair("How hard did the AC work?", "How much did you use the AC?"), hint: pair("Same as yesterday. Slide or tap to adjust.", "Same as yesterday. Adjust if today was different."), hintEmpty: undefined },
+    energyWinter: { question: pair("How did you fight the cold?", "Heater and hot water today"), hint: pair("Same as yesterday. Slide or tap to adjust.", "Same as yesterday. Adjust if today was different."), hintEmpty: undefined },
+    deliveries: { question: pair("Anything land at your base?", "Any deliveries today?"), hint: pair("Same as yesterday. Tap + or −.", "Same as yesterday. Use + or − to change."), hintEmpty: undefined },
+    outdoors: { question: pair("When were you out in the city?", "When were you outdoors today?"), hint: pair("Your usual hours. Tap to match today.", "Your usual times are ticked. Change them to match today."), hintEmpty: undefined },
+    mission: { question: pair("Did you pull off today's mission?", "Did you follow today's tip?"), hint: pair("Be honest. Partly still counts.", "Partly still counts."), hintEmpty: undefined },
+  },
+  mealNames: ["Breakfast", "Lunch", "Dinner"],
+  extraMeal: "Snack or extra",
+  meals: { veg: "Veg", "veg-dairy": "Veg + dairy", egg: "Egg", chicken: "Chicken", fish: "Fish", mutton: "Mutton", skipped: "Skipped" },
+  dairyNote: "Veg + dairy = paneer, cheese or a milk-heavy meal.",
+  addMeal: pair("+ Add a snack or extra meal", "+ Add a snack or extra meal"),
+  noTrips: pair("Quiet day at base? No trips logged yet.", "No trips added yet."),
+  tripWhen: ["Morning", "Evening"],
+  tripExtra: "Extra trip",
+  tripTitle: (mode: keyof typeof OPTIONS.mode, index: number, setup: { trip: { kind: keyof typeof OPTIONS.trip } }) => {
+    const name = OPTIONS.mode[mode];
+    if (setup.trip.kind === "wfh" || index > 1) return `${name} trip`;
+    return index === 0 ? `${name} to ${OPTIONS.trip[setup.trip.kind].toLowerCase()}` : `${name} back home`;
+  },
+  tripMeta: (minutes: number, km: number) => `${minutes} min · ≈ ${km} km`,
+  removeTrip: "Remove this trip",
+  tripMode: "How you travelled",
+  alone: "Alone",
+  shared: "Shared",
+  howLong: (minutes: number) => `How long: ${minutes} min`,
+  addTrip: pair("+ Add a trip", "+ Add a trip"),
+  acDay: "AC during the day",
+  acNight: "AC at night",
+  acNightOptions: { off: "Off", part: "Part of the night", whole: "Whole night" },
+  heater: "Room heater",
+  geyser: "Geyser",
+  geyserOptions: { no: "No", short: "Short shower", long: "Long shower" },
+  hoursUnit: "hours",
+  summerFoot: pair("You only see this because your setup says you have one.", "Shown because your setup says you have one."),
+  winterFoot: "No heater or geyser? Leave these at zero and No.",
+  foodOrders: "Food orders",
+  foodSub: "From restaurants",
+  groceries: "Quick groceries",
+  groceriesSub: "10-minute delivery apps",
+  parcels: "Parcels",
+  parcelsSub: "Online shopping",
+  tipLabel: "Today's tip",
+  worth: {
+    hero: (kg: number, inr: number) => `Worth ${kg.toFixed(1)} kg CO₂${inr >= 1 ? ` and ₹${Math.round(inr)}` : ""}.`,
+    plain: (kg: number, inr: number) => `Saves ${kg.toFixed(1)} kg CO₂${inr >= 1 ? ` and ₹${Math.round(inr)}` : ""}.`,
+  },
+  missionAnswers: { yes: "Yes", partly: "Partly", no: "No" },
+  looksRight: pair("Looks right →", "Looks right"),
+  noTripsButton: pair("No trips today →", "No trips today"),
+  kgUnit: "kg CO₂",
+  streak: (n: number) => `${n}-day streak`,
+  done: {
+    hero: {
+      sticker: "Canon Event · Logged",
+      title: "Today's story is written.",
+      intro: "",
+      streakSub: "+1 today. See you tomorrow.",
+      recapTag: "Today's recap",
+      footprint: "Collateral today",
+      mission: "Mission",
+      livesTag: "Lives",
+      kept: (n: number) => `${n} / 5 kept`,
+      livesNote: "Your lives show how much clean air you kept today. Every hour outside in Very Poor air costs one.",
+      button: "Back to the city",
+    },
+    plain: {
+      sticker: "",
+      title: "Check-in done.",
+      intro: "Every small choice adds up. Here's today.",
+      streakSub: "One more day added.",
+      recapTag: "",
+      footprint: "Footprint today",
+      mission: "Today's tip",
+      livesTag: "Lung Health",
+      kept: (n: number) => `${n} of 5 kept`,
+      livesNote: "Each heart is clean air you kept today. Every hour outside in very poor air costs one.",
+      button: "Back to Home",
+    },
+  },
+};
+
+export const FOOTPRINT_TEXT = {
+  subtitle: "The damage your lifestyle leaves behind.",
+  loadFailed: "Couldn't load your footprint. Check your connection and try again.",
+  viewLabel: "Time period",
+  thisMonth: "This month",
+  sixMonths: "Last 6 months",
+  soFar: "kg CO₂ so far this month",
+  lastSix: "kg CO₂ in the last 6 months",
+  average: (kg: number) => `About ${kg.toLocaleString("en-IN")} kg a month on average.`,
+  firstMonth: "Your first month.",
+  firstMonthText: "We're learning your routine, so comparisons start next month.",
+  compare: {
+    hero: (kg: number, previous: number, less: boolean) => `${kg} kg ${less ? "less" : "more"} than this date last month (${previous} kg).${less ? " You're ahead." : ""}`,
+    plain: (_kg: number, previous: number, less: boolean) => `By this date last month: ${previous} kg.${less ? " You're ahead." : " You're a little behind."}`,
+  },
+  biggest: {
+    hero: (source: string) => `Your biggest source: ${source}.`,
+    plain: (source: string) => `Your biggest source: ${source}.`,
+  },
+  nothingYet: "Do a check-in and your breakdown will start here.",
+  sources: { electricity: "Electricity", cooking: "Cooking gas", travel: "Travel", food: "Food", deliveries: "Deliveries", oneOffs: "Flights & one-offs" },
+  estimated: "Estimated",
+  fromBill: "From your bill ✓",
+  fromBills: (n: number, of: number) => `From your bills ✓ (${n} of ${of})`,
+  easiest: " · easiest cuts",
+  aMonth: "a month",
+  costs: (inr: number) => `· costs about ₹${inr} more`,
+  fits: (sector: string, setup: { people: number; acs: number; diet: string; trip: { kmOneWay: number; kind: keyof typeof OPTIONS.trip; mode: keyof typeof OPTIONS.mode } }) => {
+    if (sector === "travel") return `Fits you: ${setup.trip.kmOneWay} km each way to ${OPTIONS.trip[setup.trip.kind].toLowerCase()} by ${OPTIONS.mode[setup.trip.mode].toLowerCase()}.`;
+    if (sector === "electricity") return setup.acs > 0 ? `Fits you: ${setup.acs} ${setup.acs === 1 ? "AC" : "ACs"} at home.` : `Fits you: ${setup.people} ${setup.people === 1 ? "person" : "people"} at home.`;
+    if (sector === "cooking") return "Fits you: you cook with gas.";
+    if (sector === "food") return setup.diet === "non-veg" ? "Fits you: you eat non-veg." : "Fits you: an easy swap in your meals.";
+    return "Fits you: you get regular deliveries.";
+  },
+  makeMission: pair("Make it a mission", "Make it today's tip"),
+  missionSet: pair("Mission set!", "Added"),
+  trendTitle: pair("Collateral over 6 months", "Last 6 months"),
+  monthShort: (month: string) => monthName(month, "short"),
+  billMark: pair("Bill ✓", "bill ✓"),
+  estMark: pair("Est.", "est."),
+  perspective: "In perspective",
+  yourPace: "Your yearly pace",
+  averageIndian: "Average Indian",
+  tonnes: {
+    hero: (value: string) => `${value} T`,
+    plain: (value: string) => `${value} t`,
+  },
+  tonnesLine: "tonnes of CO₂",
+  paceSoon: "Your yearly pace appears after a few check-ins.",
+  trees: {
+    hero: (kg: number, trees: number) => `Your ${kg} kg cut this month is about what ${trees === 1 ? "one tree soaks" : `${trees} trees soak`} up in a year.`,
+    plain: (kg: number, trees: number) => `Your ${kg} kg cut this month is about what ${trees === 1 ? "one tree absorbs" : `${trees} trees absorb`} in a year.`,
+  },
+  below: "You're on pace to stay under the average Indian's footprint.",
+  above: "You're on pace to go over the average Indian's footprint. The cuts above are the quickest way down.",
+  howTitle: "How we calculate this",
+  how: [
+    "Each check-in multiplies what you did by an emission factor, then adds it to your month.",
+    "Electricity and cooking gas are shared, so you carry your share of the home's total.",
+    "Bills replace our electricity estimate for their month, and tune later estimates.",
+  ],
+  howLast: "Estimates, not exact measurements.",
+};

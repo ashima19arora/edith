@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     const url =
       `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lng}` +
       "&hourly=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone" +
-      "&past_days=1&forecast_days=2&timezone=Asia%2FKolkata";
+      "&past_days=14&forecast_days=2&timezone=Asia%2FKolkata";
     const response = await fetch(url, { next: { revalidate: 900 } });
     if (!response.ok) throw new Error(`Air API returned ${response.status}`);
 
@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       aqi: result.aqi,
       category: result.category,
+      mainPollutant: result.mainPollutant,
       pm25Mean: pm25Mean(hours, nowIndex),
       hours,
     });

@@ -122,13 +122,13 @@ describe("AQI", () => {
 
 describe("footprint", () => {
   it("does the fuel maths with default mileage", () => {
-    const minutes = (12 / 25) * 60;
+    const minutes = (12 / 22) * 60;
     expect(travelKg([{ mode: "two-wheeler", minutes }], setup)).toBeCloseTo((12 / 45) * 2.3);
   });
 
   it("uses the user's mileage and halves a shared cab", () => {
     const own = { ...setup, trip: { ...setup.trip, mileage: 30 } };
-    const minutes = (30 / 25) * 60;
+    const minutes = (30 / 22) * 60;
     expect(travelKg([{ mode: "two-wheeler", minutes }], own)).toBeCloseTo(2.3);
     const cab = { mode: "cab", minutes: 60 } as const;
     expect(travelKg([{ ...cab, shared: true }], setup)).toBeCloseTo(travelKg([cab], setup) / 2);

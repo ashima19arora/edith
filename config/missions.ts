@@ -47,6 +47,7 @@ export interface Mission {
   text: (c: MissionContext) => string;
   applies: (c: MissionContext) => boolean;
   saves: (c: MissionContext) => Saving;
+  timesPerMonth?: number; // How often this is realistic, when it differs from the usual for its sector
 }
 
 export function metroFare(km: number): number {
@@ -189,6 +190,7 @@ export const MISSIONS: Mission[] = [
     sector: "travel",
     text: ({ setup: s }) => `Check the tyre pressure on your ${vehicle(s)} when you next fill up.`,
     applies: ({ setup: s }) => onOwnVehicle(s) && s.trip.fuel !== "electric",
+    timesPerMonth: 26,
     saves: ({ setup: s }) => shareOfTrip(s, 0.03),
   },
   // Electricity
@@ -253,6 +255,7 @@ export const MISSIONS: Mission[] = [
     sector: "electricity",
     text: () => "Run the washing machine only with a full load, on a cold wash.",
     applies: () => true,
+    timesPerMonth: 8,
     saves: () => power(0.5),
   },
   // Cooking
@@ -290,6 +293,7 @@ export const MISSIONS: Mission[] = [
     sector: "food",
     text: () => "Pick chicken or fish instead of mutton this week.",
     applies: eatsMeat,
+    timesPerMonth: 4,
     saves: () => ({ kg: MEAL_KG.mutton - MEAL_KG.chicken, inr: MEAL_SWAP_INR.mutton }),
   },
   {

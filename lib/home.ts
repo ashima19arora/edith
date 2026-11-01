@@ -29,6 +29,8 @@ import type {
 
 const hourOf = (time: string) => Number(time.slice(11, 13));
 
+export const missionKey = (date: string) => `edith.mission.${date}`;
+
 function clock(hour: number): string {
   const h = hour % 24;
   const twelve = h % 12 === 0 ? 12 : h % 12;

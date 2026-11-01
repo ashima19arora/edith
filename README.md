@@ -56,7 +56,7 @@ EDITH answers two questions most people never get a straight answer to: is it sa
   <tr>
     <td align="center"><img src="screenshots/feature-home-hero.jpg" alt="Home in Hero mode, from the working app"><br><sub>Hero</sub></td>
     <td align="center"><img src="screenshots/feature-home-plain.jpg" alt="Home in Plain mode, from the working app"><br><sub>Plain</sub></td>
-    <td align="center"><img src="screenshots/feature-air.jpg" alt="Air today design"><br><sub>Design preview</sub></td>
+    <td align="center"><img src="screenshots/feature-air.jpg" alt="Air today, from the working app"><br><sub>Working app</sub></td>
   </tr>
   <tr>
     <td align="center" valign="top">
@@ -73,8 +73,8 @@ EDITH answers two questions most people never get a straight answer to: is it sa
     </td>
   </tr>
   <tr>
-    <td align="center"><img src="screenshots/feature-checkin.jpg" alt="Daily check-in design"><br><sub>Design preview</sub></td>
-    <td align="center"><img src="screenshots/feature-footprint.jpg" alt="My footprint design"><br><sub>Design preview</sub></td>
+    <td align="center"><img src="screenshots/feature-checkin.jpg" alt="Daily check-in, from the working app"><br><sub>Working app</sub></td>
+    <td align="center"><img src="screenshots/feature-footprint.jpg" alt="My footprint, from the working app with demo history"><br><sub>Working app, demo history</sub></td>
     <td align="center"><img src="screenshots/feature-ranks.jpg" alt="Ranks, from the working app with demo progress"><br><sub>Working app, demo progress</sub></td>
   </tr>
   <tr>
@@ -94,7 +94,7 @@ EDITH answers two questions most people never get a straight answer to: is it sa
   <tr>
     <td align="center"><img src="screenshots/feature-family.jpg" alt="Family design"><br><sub>Design preview</sub></td>
     <td align="center"><img src="screenshots/feature-assistant.jpg" alt="EDITH assistant design"><br><sub>Design preview</sub></td>
-    <td align="center"><img src="screenshots/feature-diwali.jpg" alt="Diwali guide design"><br><sub>Design preview</sub></td>
+    <td align="center"><img src="screenshots/feature-diwali.jpg" alt="Diwali guide, from the working app"><br><sub>Working app</sub></td>
   </tr>
 </table>
 

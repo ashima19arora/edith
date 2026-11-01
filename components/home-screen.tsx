@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { MISSIONS, type MissionContext } from "@/config/missions";
+import { loadAir, type AirResult } from "@/lib/air";
 import { cigarettesOutAllDay } from "@/lib/aqi";
 import { isWinter } from "@/lib/footprint";
 import {
@@ -13,6 +14,7 @@ import {
   headline,
   livesInfo,
   nextGoTime,
+  missionKey,
   pickMission,
   type FootprintInfo,
 } from "@/lib/home";
@@ -22,44 +24,12 @@ import type { Account, MissionEntry, Profile } from "@/lib/storage";
 import { storeFor } from "@/lib/storage";
 import { nowIST } from "@/lib/time";
 import { useMode } from "@/lib/theme";
-import type { AqiCategory, Checkin, HourlyAir, Mode, SetupAnswers } from "@/lib/types";
+import type { Checkin, Mode, SetupAnswers } from "@/lib/types";
 import { AppShell } from "./app-shell";
-import { CameraIcon, FlameIcon, Skyline, SpiderIcon } from "./art";
+import { FlameIcon, Skyline, SpiderIcon } from "./art";
+import { BillCapture } from "./bill-capture";
 
-interface AirData {
-  aqi: number;
-  category: AqiCategory;
-  pm25Mean: number | null;
-  hours: HourlyAir[];
-}
-
-const AIR_KEY = "edith.lastAir";
 const BILL_KEY = "edith.billCardSeen";
-const missionKey = (date: string) => `edith.mission.${date}`;
-
-// The last good reading is kept so a failed request doesn't blank the screen.
-function lastGoodAir(): { air: AirData; at: number } | null {
-  try {
-    return JSON.parse(localStorage.getItem(AIR_KEY) ?? "null");
-  } catch {
-    return null;
-  }
-}
-
-async function loadAir(setup: SetupAnswers): Promise<{ air: AirData | null; at: number | null }> {
-  const { lat, lng } = setup.location;
-  const query = lat != null && lng != null ? `?lat=${lat}&lng=${lng}` : "";
-  try {
-    const response = await fetch(`/api/air${query}`);
-    if (!response.ok) throw new Error("Air unavailable");
-    const air = (await response.json()) as AirData;
-    localStorage.setItem(AIR_KEY, JSON.stringify({ air, at: Date.now() }));
-    return { air, at: null };
-  } catch {
-    const saved = lastGoodAir();
-    return { air: saved?.air ?? null, at: saved?.at ?? null };
-  }
-}
 
 // One mission a day: asks Gemini once, and keeps the rule-based pick if that isn't available.
 async function loadMissionId(context: MissionContext, date: string): Promise<string | null> {
@@ -160,13 +130,12 @@ export function HomeScreen({ account, profile, setup }: HomeScreenProps) {
   const today = useMemo(() => nowIST(), []);
   const store = useMemo(() => storeFor(account), [account]);
 
-  const [air, setAir] = useState<{ air: AirData | null; at: number | null } | null>(null);
+  const [air, setAir] = useState<AirResult | null>(null);
   const [checkins, setCheckins] = useState<Checkin[]>([]);
   const [footprint, setFootprint] = useState<FootprintInfo | null>(null);
   const [missionId, setMissionId] = useState<string | null>(null);
   const [entry, setEntry] = useState<MissionEntry | null>(null);
   const [billDue, setBillDue] = useState(false);
-  const [billNote, setBillNote] = useState(false);
 
   const context = useMemo<MissionContext>(() => {
     const latest = [...checkins].sort((a, b) => b.date.localeCompare(a.date))[0];
@@ -226,15 +195,9 @@ export function HomeScreen({ account, profile, setup }: HomeScreenProps) {
     await store.saveMission(next).catch(() => setEntry(entry));
   }
 
-  function billPicked() {
-    localStorage.setItem(BILL_KEY, today.date.slice(0, 7));
-    setBillDue(false);
-    setBillNote(true);
-  }
-
   const area = setup.location.lat !== null && setup.location.area.startsWith("Using") ? null : setup.location.area;
   const initial = (profile.displayName ?? "").trim().charAt(0).toUpperCase() || TEXT.youInitial;
-  const stale = air?.at ?? null;
+  const stale = air?.staleAt ?? null;
   const cigarettes = data?.pm25Mean != null ? Math.round(cigarettesOutAllDay(data.pm25Mean)) : null;
 
   return (
@@ -403,18 +366,13 @@ export function HomeScreen({ account, profile, setup }: HomeScreenProps) {
         )}
 
         {billDue && (
-          <section className="home-bill">
-            <span className="bill-icon" aria-hidden="true"><CameraIcon /></span>
-            <p className="bill-text">
-              <strong>{TEXT.billTitle[mode]}</strong> {TEXT.billText[mode]}
-            </p>
-            <label className="bill-btn">
-              {TEXT.billButton[mode]}
-              <input type="file" accept="image/*" capture="environment" className="sr-only" onChange={billPicked} />
-            </label>
-          </section>
+          <BillCapture
+            account={account}
+            month={lastMonth(today.date.slice(0, 7))}
+            className="home-bill"
+            onDone={() => localStorage.setItem(BILL_KEY, today.date.slice(0, 7))}
+          />
         )}
-        {billNote && <p className="bill-note" role="status">{TEXT.billSoon}</p>}
 
         <section className="home-streak">
           <div className="streak-row">

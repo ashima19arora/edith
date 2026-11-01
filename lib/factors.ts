@@ -103,12 +103,12 @@ export const DELIVERY_ORDER_INR = 100;
 
 // Placeholders: typical Delhi speeds, km/h, to convert logged minutes to distance.
 export const SPEED_KMH: Record<TravelMode, number> = {
-  metro: 35,
+  metro: 25,
   bus: 15,
-  auto: 20,
-  cab: 22,
-  "two-wheeler": 25,
-  car: 22,
+  auto: 18,
+  cab: 20,
+  "two-wheeler": 22,
+  car: 20,
   cycle: 12,
   walk: 5,
 };
@@ -253,6 +253,9 @@ export const XP = {
 };
 
 export const RANK_THRESHOLDS = [0, 200, 500, 1000, 2000, 4000];
+
+// Placeholder: a commonly quoted figure for what one mature tree absorbs in a year.
+export const TREE_KG_PER_YEAR = 21;
 
 // Midpoint of each setup answer for online orders a week.
 export const ORDERS_BAND_PER_WEEK = { none: 0, "1-3": 2, "4-7": 5.5, "8+": 10 };

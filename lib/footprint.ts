@@ -126,7 +126,7 @@ export function nextCalibration(previous: number, actualKwh: number, estimatedKw
   return previous + (ratio - previous) * CALIBRATION.smoothing;
 }
 
-function billForMonth(bills: Bill[], month: string): Bill | undefined {
+export function billForMonth(bills: Bill[], month: string): Bill | undefined {
   // A billing period rarely matches a calendar month, so go by its midpoint.
   return bills.find((bill) => {
     const middle = (Date.parse(bill.periodStart) + Date.parse(bill.periodEnd)) / 2;
@@ -159,6 +159,13 @@ export function monthToDate(
   }
   for (const o of oneOffs) {
     if (o.date.startsWith(month) && o.date <= date) breakdown.oneOffs += o.co2Kg;
+  }
+
+  // Setup's flights are spread across the year, so a month carries a share up to this date.
+  if (inMonth.length > 0) {
+    const [year, m, day] = date.split("-").map(Number);
+    const days = new Date(Date.UTC(year, m, 0)).getUTCDate();
+    breakdown.oneOffs += (setupFlightsKgPerMonth(setup.flights) * day) / days;
   }
 
   const bill = billForMonth(bills, month);
