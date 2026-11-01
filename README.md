@@ -52,9 +52,9 @@ The air damages your health. Your lifestyle damages the air. EDITH tracks both a
 
 <table>
   <tr>
+    <td align="center" width="33%"><img src="screenshots/feature-style.png" alt="Pick your style screen"><br><sub>Pick your style</sub></td>
     <td align="center" width="33%"><img src="screenshots/feature-home-hero.jpg" alt="Home in Hero mode"><br><sub>Hero</sub></td>
     <td align="center" width="33%"><img src="screenshots/feature-home-plain.jpg" alt="Home in Plain mode"><br><sub>Plain</sub></td>
-    <td align="center" width="33%"><img src="screenshots/feature-style.jpg" alt="Pick your style screen"><br><sub>Pick your style</sub></td>
   </tr>
 </table>
 
