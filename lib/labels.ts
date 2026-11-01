@@ -302,7 +302,7 @@ export const LEGAL = {
     },
     {
       heading: "Family",
-      body: "If you join a household, other members see your name and your daily totals: lives kept and footprint. They don't see your meals, trips or setup answers. Profiles you add for elders, children or pets can be seen and edited by everyone in the household. You can leave at any time.",
+      body: "If you join a household, other members see your name and your daily totals: lives kept and footprint. Electricity bills you add (units and dates, not the photo) apply to the whole household. They don't see your meals, trips or setup answers. Profiles you add for elders, children or pets can be seen and edited by everyone in the household. You can leave at any time.",
     },
     {
       heading: "How we use it",
@@ -607,9 +607,10 @@ export const CALCULATE = {
         "Every activity is multiplied by an emission factor.",
         "Electricity: 0.727 kg CO₂ per unit, from India's Central Electricity Authority. Home electricity and cooking gas are split between the people living there.",
         "Own vehicle: distance ÷ mileage × fuel factor. Petrol is about 2.3 kg CO₂ per litre. If you skip mileage we assume 45 km/l for a two-wheeler and 15 km/l for a car.",
-        "Metro, bus, auto and cab use a typical figure per passenger-km. These are EDITH's estimates.",
+        "Bus, auto and cab use published Indian figures per km. Metro is EDITH's estimate.",
         "Food: about 0.6 kg a day on a vegetarian Indian diet and 1 kg on a non-vegetarian one, from published studies. Per-meal values are built from these.",
-        "Deliveries and flights are EDITH's estimates for now.",
+        "Domestic flights use an Indian figure of about 0.12 kg CO₂ per km. Parcels use about 0.29 kg per delivery in India.",
+        "International flights, big purchases, party food and crackers are rough estimates.",
       ],
     },
     {
@@ -670,7 +671,7 @@ const quarters = (n: number) => {
 
 export const BILL_TEXT = {
   title: pair("Got last month's bill?", "Got last month's bill?"),
-  text: pair("Snap it to make your numbers exact.", "Add it to make your numbers exact."),
+  text: pair("Snap it to make your numbers exact. One bill covers the whole home.", "Add it to make your numbers exact. One bill covers the whole home."),
   button: pair("Snap", "Add"),
   reading: "Reading…",
   readFailed: "We couldn't read that photo. Type the units from your bill instead.",
@@ -1099,7 +1100,7 @@ export const FAMILY_TEXT = {
   personal: "Personal",
   sharedPlain: (kg: number) => `Shared ${kg} kg · power + gas`,
   personalPlain: (kg: number) => `Personal ${kg} kg`,
-  sharedNote: "Shared = electricity + LPG, added once for the home.",
+  sharedNote: "Shared = electricity + LPG, added once for the home. Anyone here can add the bill.",
   personalBars: pair("Personal · travel, food, deliveries", "Personal: travel, food and deliveries"),
   noFootprint: "Your family's footprint starts with the first check-in.",
   privacy: "Everyone sees totals, never each other's details.",
@@ -1138,6 +1139,8 @@ export const FAMILY_TEXT = {
   manage: "Manage",
   editHousehold: "Edit household",
   editProfiles: "Edit profiles",
+  billWho: "Who can add the electricity bill",
+  billEveryone: "Everyone",
   leave: "Leave household",
   leaveConfirm: "Leave this household? Your own check-ins stay with you.",
 };

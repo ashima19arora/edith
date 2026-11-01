@@ -239,7 +239,7 @@ describe("collateral", () => {
   it("spreads setup's flights across the month", () => {
     const flying = { ...setup, flights: { domestic: "1-2" as const, international: "0" as const } };
     const { breakdown } = monthToDate("2026-11-15", checkins, [], [], flying);
-    expect(breakdown.oneOffs).toBeCloseTo(37.5 * (15 / 30));
+    expect(breakdown.oneOffs).toBeCloseTo(34.75 * (15 / 30));
     expect(monthToDate("2026-08-15", checkins, [], [], flying).breakdown.oneOffs).toBe(0);
   });
 });

@@ -56,6 +56,7 @@ export async function loadHousehold(userId: string, today: string): Promise<Hous
         date: row.date,
         livesKept: Number(row.lives_kept),
         sharedKg: Number(row.shared_kg),
+        electricityKg: Number(row.electricity_kg ?? row.shared_kg),
         personalKg: Number(row.personal_kg),
       });
     }

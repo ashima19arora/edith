@@ -95,8 +95,11 @@ The air damages your health. Your lifestyle damages the air. EDITH tracks both a
 | AQI | CPCB National AQI bands | [CPCB, via IES](https://ies.gov.in/arthapedia/concept/national-air-quality-index) |
 | Cigarettes | 22 µg/m³ PM2.5 for a day ≈ 1 cigarette | Berkeley Earth |
 | Food | About 0.6 kg a day vegetarian, 1 kg non-veg | Pathak et al. 2010 |
+| Domestic flights | 0.121 kg CO2 per passenger-km | [India GHG Program](https://indiaghgp.org/sites/default/files/AIR%20Transport%20Emission.pdf) |
+| Bus and car in Delhi | 29 g per passenger-km, 144 g per car-km | [TERI](https://teriin.org/sites/default/transport/Per_passenger_emission_in_Delhi_Different_Modes.pdf) |
+| Parcel delivery | 285 g CO2 per delivery in India | [Stand.earth](https://stand.earth/wp-content/uploads/2022/07/SRG_Last_Mile-FINAL.pdf) |
 
-These are estimates to help you plan, not measurements or medical advice. Some factors, such as deliveries and flights, are our own working estimates. All of them are labelled in [`lib/factors.ts`](lib/factors.ts).
+These are estimates to help you plan, not measurements or medical advice. Some factors, such as the Metro, international flights and big purchases, are our own working estimates. All of them are labelled in [`lib/factors.ts`](lib/factors.ts).
 
 ## Next up
 

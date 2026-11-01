@@ -73,6 +73,16 @@ describe("family", () => {
     expect(result.previousKg).toBeNull();
   });
 
+  it("lets one bill correct the whole home's electricity", () => {
+    const oct = Array.from({ length: 30 }, (_, i) => ({ ...row("a", `2026-10-${String(i + 1).padStart(2, "0")}`, 1, 0), electricityKg: 1 }));
+    const bill = { periodStart: "2026-10-01", periodEnd: "2026-10-30", units: 100, source: "manual" as const };
+    const last = "2026-10-30";
+    expect(familyFootprint(members, oct, 2, last).sharedKg).toBe(60);
+    expect(familyFootprint(members, oct, 2, last, [bill]).sharedKg).toBeCloseTo(72.7);
+    // Halfway through the month, half the bill has been used so far
+    expect(familyFootprint(members, oct, 2, "2026-10-15", [bill]).sharedKg).toBeCloseTo(36.35);
+  });
+
   it("compares with the same date last month", () => {
     const days = [row("a", "2026-10-02"), row("a", "2026-10-20"), row("a", "2026-11-01")];
     expect(familyFootprint(members, days, 1, TODAY).previousKg).toBe(3);
@@ -181,9 +191,9 @@ describe("check-in extras", () => {
   });
 
   it("prices one-offs", () => {
-    expect(oneOffKg({ kind: "flight", route: "domestic", trip: "return" })).toBe(300);
+    expect(oneOffKg({ kind: "flight", route: "domestic", trip: "return" })).toBe(278);
     expect(oneOffKg({ kind: "flight", route: "international", trip: "one-way" })).toBe(750);
-    expect(oneOffKg({ kind: "long-trip", mode: "train", km: 100 })).toBeCloseTo(3);
+    expect(oneOffKg({ kind: "long-trip", mode: "train", km: 100 })).toBeCloseTo(0.79);
     expect(oneOffKg({ kind: "guests", people: 4 })).toBeGreaterThan(0);
     expect(oneOffKg({ kind: "purchase", size: "large" })).toBeGreaterThan(oneOffKg({ kind: "purchase", size: "small" }));
   });

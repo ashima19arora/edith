@@ -38,7 +38,7 @@ import { weekStart } from "@/lib/ranks";
 import { getAccount, signInWithGoogle, storeFor, type Account } from "@/lib/storage";
 import { nowIST } from "@/lib/time";
 import { ThemeRoot, useMode } from "@/lib/theme";
-import type { Checkin, Mode, SetupAnswers, TimeBlock } from "@/lib/types";
+import type { Bill, Checkin, Mode, SetupAnswers, TimeBlock } from "@/lib/types";
 import { BackIcon } from "./art";
 import { Heart } from "./heart";
 
@@ -213,6 +213,7 @@ function FamilyInner() {
   const [account, setAccount] = useState<Account | null>(null);
   const [setup, setSetup] = useState<SetupAnswers | null>(null);
   const [checkins, setCheckins] = useState<Checkin[]>([]);
+  const [bills, setBills] = useState<Bill[]>([]);
   const [house, setHouse] = useState<Household | null>(null);
   const [air, setAir] = useState<AirResult | null>(null);
   const [sheet, setSheet] = useState<Sheet | null>(null);
@@ -238,7 +239,8 @@ function FamilyInner() {
       setAccount(found);
       if (found?.kind !== "user") return setView("guest");
       const store = storeFor(found);
-      const [saved, foundCheckins] = await Promise.all([store.getSetup(), store.getCheckins()]);
+      const [saved, foundCheckins, foundBills] = await Promise.all([store.getSetup(), store.getCheckins(), store.getBills()]);
+      setBills(foundBills);
       if (!saved) return router.replace("/app/style");
       setSetup(saved);
       setCheckins(foundCheckins);
@@ -440,7 +442,7 @@ function FamilyInner() {
   });
   const myLives = data ? livesInfo(dayHours, setup, data.aqi, go) : null;
   const myCheckin = checkins.find((c) => c.date === today.date);
-  const footprint = familyFootprint(house.members, house.days, setup.people, today.date);
+  const footprint = familyFootprint(house.members, house.days, setup.people, today.date, bills);
   const personalTotal = footprint.personal.reduce((sum, p) => sum + p.kg, 0);
   const sharePct = footprint.totalKg > 0 ? (footprint.sharedKg / footprint.totalKg) * 100 : 50;
   const barMax = Math.max(1, ...footprint.personal.map((p) => p.kg));
@@ -689,6 +691,10 @@ function FamilyInner() {
               <span className="row-mark" aria-hidden="true">›</span>
             </button>
           ))}
+          <div className="row">
+            <span>{TEXT.billWho}</span>
+            <span className="row-value">{TEXT.billEveryone}</span>
+          </div>
           <button
             type="button"
             className="row row-signout"

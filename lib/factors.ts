@@ -57,12 +57,18 @@ export const DEFAULT_MILEAGE = { "two-wheeler": 45, car: 15 };
 // Placeholders: kWh per km for electric vehicles.
 export const EV_KWH_PER_KM = { "two-wheeler": 0.03, car: 0.15 };
 
-// Placeholders: kg CO2 per passenger-km. Own vehicles come from fuel maths instead.
+// kg CO2 per passenger-km. Own vehicles come from fuel maths instead.
+// bus: TERI, Delhi per-passenger study, 29.48 g/pkm.
+// auto: India GHG Program road paper, 0.108 kg per CNG vehicle-km, with 1.5 riders assumed.
+// cab: TERI, petrol car in Delhi, about 0.144 kg per vehicle-km, for one rider.
+// metro: EDITH estimate; no published figure for its own emissions found. walk, cycle: none.
+// https://teriin.org/sites/default/transport/Per_passenger_emission_in_Delhi_Different_Modes.pdf
+// https://indiaghgp.org/sites/default/files/Road%20Transport%20Technical%20Paper.pdf
 export const PASSENGER_KG_PER_KM = {
   metro: 0.03,
-  bus: 0.05,
-  auto: 0.08,
-  cab: 0.15,
+  bus: 0.029,
+  auto: 0.072,
+  cab: 0.144,
   walk: 0,
   cycle: 0,
 };
@@ -128,17 +134,33 @@ export const MEAL_KG = {
   skipped: 0,
 };
 
-// Placeholders.
-export const DELIVERY_KG = { food: 0.5, grocery: 0.3, parcel: 0.6 };
+// parcel: Stand.earth, India's last-mile average of 285 g CO2 per delivery; excludes making the goods.
+// https://stand.earth/wp-content/uploads/2022/07/SRG_Last_Mile-FINAL.pdf
+// food: that delivery plus about 0.2 kg of packaging (Australian study, 0.16-0.29 kg); excludes the food.
+// grocery: placeholder, set near the parcel figure.
+export const DELIVERY_KG = { food: 0.5, grocery: 0.3, parcel: 0.285 };
 
-// --- Flights (placeholders, kg CO2 per round trip) ---
+// --- Flights (kg CO2 per round trip) ---
 
-export const FLIGHT_KG = { domestic: 300, international: 1500 };
+// domestic: India GHG Program, 0.121 kg per passenger-km, over Delhi-Mumbai and back (about 2,300 km).
+// https://indiaghgp.org/sites/default/files/AIR%20Transport%20Emission.pdf
+// international: placeholder; it varies too much by route, and no figure was verified.
+export const FLIGHT_KG = { domestic: 278, international: 1500 };
 
-// Placeholders for one-offs, kg CO2. A one-way flight is half a round trip.
-export const LONG_TRIP_KG_PER_KM = { train: 0.03, bus: 0.05 };
+// One-offs, kg CO2. A one-way flight is half a round trip.
+// train: India GHG Program rail paper, about 0.0079 kg per passenger-km.
+// bus: TERI's Delhi city-bus figure, as no intercity figure was found.
+// https://indiaghgp.org/sites/default/files/Rail%20Transport%20Emission.pdf
+export const LONG_TRIP_KG_PER_KM = { train: 0.0079, bus: 0.029 };
+
+// Making the item. small: a t-shirt or jeans, reported at about 4-33 kg. medium: a new smartphone,
+// commonly reported at about 70-80 kg. large: placeholder; no reliable appliance figure was found.
 export const PURCHASE_KG = { small: 15, medium: 70, large: 300 };
-export const GUEST_KG_PER_PERSON = 1;
+
+// Estimate: one extra non-veg meal per guest, matching MEAL_KG.chicken.
+export const GUEST_KG_PER_PERSON = 0.6;
+
+// Placeholder: no reliable figure found.
 export const CRACKERS_KG = 5;
 
 // Placeholder midpoints for the setup answer bands, in round trips a year.

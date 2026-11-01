@@ -75,7 +75,7 @@ describe("badges", () => {
     badgeStates(
       setup,
       checkins,
-      Array.from({ length: bills }, () => ({ periodStart: "", periodEnd: "", units: 1, source: "manual" as const })),
+      Array.from({ length: bills }, (_, i) => ({ periodStart: `2026-0${i + 1}-01`, periodEnd: `2026-0${i + 1}-28`, units: 1, source: "manual" as const })),
       squad,
     )
       .filter((b) => b.earned)
@@ -92,6 +92,13 @@ describe("badges", () => {
     expect(earned([], 0, true)).toEqual(["assemble"]);
     const week = ["2026-11-02", "2026-11-03", "2026-11-04"].map((d) => checkin(d, { trips: metroTrip }));
     expect(earned(week)).toContain("rail-rider");
+  });
+
+  it("counts two uploads for one month once", () => {
+    const bill = { periodStart: "2026-09-01", periodEnd: "2026-09-30", units: 1, source: "manual" as const };
+    const state = badgeStates(setup, [], [bill, bill, bill], false).find((b) => b.id === "paper-trail")!;
+    expect(state.earned).toBe(false);
+    expect(state.count).toEqual([1, 3]);
   });
 
   it("counts a seven-day streak", () => {

@@ -176,7 +176,7 @@ function userStore(id: string): Store {
       return (data ?? []).map((row): OneOff => ({ date: row.date, kind: row.kind, details: row.details, co2Kg: Number(row.co2_kg) }));
     },
     async getBills() {
-      const { data, error } = await supabase.from("bills").select("period_start, period_end, units, source").eq("user_id", id);
+      const { data, error } = await supabase.from("bills").select("period_start, period_end, units, source").order("created_at", { ascending: false }); // Yours, and your household's
       if (error) throw error;
       return (data ?? []).map(
         (row): Bill => ({ periodStart: row.period_start, periodEnd: row.period_end, units: Number(row.units), source: row.source }),

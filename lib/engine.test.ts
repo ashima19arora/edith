@@ -161,7 +161,7 @@ describe("footprint", () => {
   });
 
   it("spreads setup flights across the year", () => {
-    expect(setupFlightsKgPerMonth({ domestic: "1-2", international: "0" })).toBeCloseTo(37.5);
+    expect(setupFlightsKgPerMonth({ domestic: "1-2", international: "0" })).toBeCloseTo(34.75);
   });
 
   it("clamps and smooths the bill calibration", () => {

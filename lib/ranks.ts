@@ -100,6 +100,8 @@ export function badgeStates(
   const fewerDrops =
     usualOrders > 0 && fullWeeks.some((week) => week.reduce((sum, c) => sum + deliveries(c), 0) <= usualOrders / 2);
 
+  // Bills are shared in a household, and two uploads for one month count once.
+  const billMonths = new Set(bills.map((b) => b.periodEnd.slice(0, 7))).size;
   const escapes = checkins.filter((c) => c.inGoTime).length;
 
   // Diwali week: the three days either side of Diwali, judged once it's over.
@@ -120,7 +122,7 @@ export function badgeStates(
     { id: "fewer-drops", earned: fewerDrops, count: [fewerDrops ? 1 : 0, 1] },
     { id: "diyas-only", earned: diyasOnly },
     { id: "assemble", earned: hasSquad },
-    { id: "paper-trail", earned: bills.length >= 3, count: [Math.min(bills.length, 3), 3] },
+    { id: "paper-trail", earned: billMonths >= 3, count: [Math.min(billMonths, 3), 3] },
     { id: "clean-escape", earned: escapes >= 5, count: [Math.min(escapes, 5), 5] },
   ];
 }

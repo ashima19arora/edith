@@ -3,13 +3,13 @@
 import { categoryFor } from "./aqi";
 import { timelineRows, type TimelineRow } from "./airspace";
 import { AC_KW, DELIVERY_KG, ELECTRICITY_INR_PER_KWH, GRID_KG_PER_KWH, LIVES_PER_DAY, ORDERS_BAND_PER_WEEK } from "./factors";
-import { isWinter } from "./footprint";
+import { billForMonth, isWinter } from "./footprint";
 import { isBad, type GoTimeInfo } from "./home";
 import { FAMILY_TEXT } from "./labels";
 import { livesKept, livesLost } from "./lives";
 import { currentStreak, familyDates } from "./progress";
 import { weekStart } from "./ranks";
-import type { AqiCategory, Checkin, HourlyAir, Mode, Purifier, SetupAnswers, TimeBlock } from "./types";
+import type { AqiCategory, Bill, Checkin, HourlyAir, Mode, Purifier, SetupAnswers, TimeBlock } from "./types";
 
 export type ProfileKind = "elder" | "child" | "pet";
 export type PetType = "dog" | "cat" | "bird" | "other";
@@ -34,6 +34,7 @@ export interface MemberDay {
   date: string;
   livesKept: number;
   sharedKg: number;
+  electricityKg?: number; // Part of sharedKg
   personalKg: number;
 }
 
@@ -60,13 +61,23 @@ export interface FamilyFootprint {
   previousKg: number | null;
 }
 
-function totals(members: Member[], days: MemberDay[], people: number) {
+function electricityOf(days: MemberDay[], userId: string): number {
+  return days.filter((d) => d.userId === userId).reduce((sum, d) => sum + (d.electricityKg ?? d.sharedKg), 0);
+}
+
+function totals(members: Member[], days: MemberDay[], people: number, bill?: Bill, wholeMonth: MemberDay[] = days) {
   // Each check-in holds one person's share of the home, so scale one member's up to the whole home
   // once. Taking the fullest record means shared energy is never added twice.
-  const sharedByMember = members.map((m) =>
-    days.filter((d) => d.userId === m.userId).reduce((sum, d) => sum + d.sharedKg, 0),
-  );
-  const sharedKg = Math.max(0, ...sharedByMember) * Math.max(1, people);
+  const sharedOf = (userId: string) => days.filter((d) => d.userId === userId).reduce((sum, d) => sum + d.sharedKg, 0);
+  const fullest = members.reduce<Member | null>((top, m) => (!top || sharedOf(m.userId) > sharedOf(top.userId) ? m : top), null);
+  let sharedKg = (fullest ? sharedOf(fullest.userId) : 0) * Math.max(1, people);
+
+  // A bill replaces the estimate for the whole home, spread like the estimate across the month so far.
+  const estimatedMonth = fullest ? electricityOf(wholeMonth, fullest.userId) : 0;
+  if (fullest && bill && estimatedMonth > 0) {
+    const soFar = electricityOf(days, fullest.userId);
+    sharedKg += (bill.units * GRID_KG_PER_KWH * soFar) / estimatedMonth - soFar * Math.max(1, people);
+  }
   const personal = members.map((m) => ({
     userId: m.userId,
     kg: days.filter((d) => d.userId === m.userId).reduce((sum, d) => sum + d.personalKg, 0),
@@ -74,9 +85,16 @@ function totals(members: Member[], days: MemberDay[], people: number) {
   return { sharedKg, personal, totalKg: sharedKg + personal.reduce((sum, p) => sum + p.kg, 0) };
 }
 
-export function familyFootprint(members: Member[], days: MemberDay[], people: number, today: string): FamilyFootprint {
+export function familyFootprint(
+  members: Member[],
+  days: MemberDay[],
+  people: number,
+  today: string,
+  bills: Bill[] = [],
+): FamilyFootprint {
   const month = today.slice(0, 7);
-  const current = totals(members, days.filter((d) => d.date.startsWith(month) && d.date <= today), people);
+  const inMonth = (m: string) => days.filter((d) => d.date.startsWith(m));
+  const current = totals(members, inMonth(month).filter((d) => d.date <= today), people, billForMonth(bills, month), inMonth(month));
 
   const [year, m, day] = today.split("-").map(Number);
   const lastDay = new Date(Date.UTC(year, m - 1, 0)).getUTCDate();
@@ -84,7 +102,9 @@ export function familyFootprint(members: Member[], days: MemberDay[], people: nu
   const previousDays = days.filter((d) => d.date.startsWith(previousDate.slice(0, 7)) && d.date <= previousDate);
   return {
     ...current,
-    previousKg: previousDays.length ? totals(members, previousDays, people).totalKg : null,
+    previousKg: previousDays.length
+      ? totals(members, previousDays, people, billForMonth(bills, previousDate.slice(0, 7)), inMonth(previousDate.slice(0, 7))).totalKg
+      : null,
   };
 }
 
