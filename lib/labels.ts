@@ -144,6 +144,7 @@ export const SETUP_TEXT = {
   whyWeAsk: "Why we ask",
   next: pair("Next", "Continue"),
   finish: "Finish",
+  saveEdit: "Save",
   issue: "Issue",
   progressHero: (step: number, total: number, seconds: number) =>
     `${step} of ${total} in this issue · about ${seconds} sec left`,
@@ -356,10 +357,8 @@ export const COMING_SOON = {
   air: { title: LABELS.airTab, nav: "air" },
   checkin: { title: LABELS.checkinTab, nav: "checkin" },
   footprint: { title: LABELS.footprintTab, nav: "footprint" },
-  progress: { title: LABELS.progressTab, nav: "progress" },
   family: { title: LABELS.family, nav: null },
   assistant: { title: LABELS.assistant, nav: null },
-  settings: { title: pair("Settings", "Settings"), nav: null },
 } as const;
 
 export const HOME_TEXT = {
@@ -481,3 +480,183 @@ export const HOME_TEXT = {
   streakSub: pair("4 taps · 30 sec", "4 questions · 30 sec"),
   checkinButton: pair("Log today's Canon Event", "Do today's check-in"),
 };
+
+export const CHECK_SECTIONS = ["base", "patrol", "power", "fuel"] as const;
+
+export const RANKS_TEXT = {
+  subtitle: pair("Your hero journey. Only you against your own start.", "Measured against your own start, never other people."),
+  loadFailed: "Couldn't load your progress. Check your connection and try again.",
+  rankNames: ["Origin Story", "Friendly Neighbour", "Rooftop Runner", "Masked Vigilante", "City Guardian", "Multiverse Legend"],
+  level: (n: number) => `Level ${n}`,
+  levelWord: "Level",
+  currentRank: "Current rank",
+  topRank: "You've reached the top rank.",
+  toNext: (xp: number, name: string) => `${xp} XP to ${name}`,
+  cityLights: "Your city lights up",
+  streak: (n: number) => `${n}-day streak`,
+  longest: (n: number) => `Longest: ${n} ${n === 1 ? "day" : "days"}`,
+  currentStreak: "Current streak",
+  longestLabel: "Longest",
+  days: (n: number) => `${n} ${n === 1 ? "day" : "days"}`,
+  heatmapAlt: (n: number) => `Check-in history for the last 12 weeks. ${n} check-ins in total.`,
+  axisStart: "12 weeks ago",
+  axisEnd: "Today",
+  axisRange: "Last 12 weeks",
+  missed: "Missed",
+  checkedIn: "Checked in",
+  missionDone: pair("+ mission done", "+ tip done"),
+  challengeTag: "This week's challenge",
+  challenge: {
+    metro: (n: number) => `Take the Metro ${n} days this week.`,
+    "no-delivery": (n: number) => `Go ${n} days without a delivery this week.`,
+    "check-in": (n: number) => `Check in ${n} days this week.`,
+  },
+  challengeNote: {
+    hero: (done: number, target: number, kind: "metro" | "no-delivery" | "check-in") => {
+      const left = target - done;
+      if (left === 0) return `${done} of ${target} done. Challenge complete!`;
+      const unit = { metro: "Metro day", "no-delivery": "delivery-free day", "check-in": "check-in" }[kind];
+      return `${done} of ${target} done. ${left} more ${unit}${left === 1 ? "" : "s"} to go.`;
+    },
+    plain: (done: number, target: number) => `${done} of ${target} done`,
+  },
+  badgesTag: "Badges",
+  badgeCount: {
+    hero: (earned: number, total: number) => `${earned} / ${total}`,
+    plain: (earned: number, total: number) => `${earned} of ${total}`,
+  },
+  diyasLocked: "Unlocks in Diwali week",
+  badges: {
+    "suit-up": { name: "Suit Up", how: "First check-in", progress: undefined },
+    "seven-day": { name: "Seven-Day Saga", how: "7-day streak", progress: undefined },
+    "great-responsibility": { name: "Great Responsibility", how: "30-day streak", progress: (n: number, of: number) => `${n} / ${of} days` },
+    "rail-rider": { name: "Rail Rider", how: "3+ Metro days in a week", progress: undefined },
+    "cool-head": { name: "Cool Head", how: "AC under your average for a week", progress: undefined },
+    "fewer-drops": { name: "Fewer Drops", how: "Half your usual deliveries for a week", progress: (n: number, of: number) => `${n} / ${of} week` },
+    "diyas-only": { name: "Diyas Only", how: "No crackers logged in Diwali week", progress: undefined },
+    assemble: { name: "Assemble!", how: "Create a Squad with 2+ members", progress: undefined },
+    "paper-trail": { name: "Paper Trail", how: "Upload 3 electricity bills", progress: (n: number, of: number) => `${n} / ${of} bills` },
+    "clean-escape": { name: "Clean Escape", how: "Go out during Go Time 5 times", progress: (n: number, of: number) => `${n} / ${of} times` },
+  },
+  xpToggle: "How you earn XP",
+  xpRows: [
+    ["Daily check-in", "checkin"],
+    ["Mission done", "mission"],
+    ["Weekly challenge", "weeklyChallenge"],
+    ["Bill uploaded", "bill"],
+    ["7-day streak", "streak7"],
+    ["30-day streak", "streak30"],
+    ["Squad Goal completed (each member)", "squadGoal"],
+  ] as const,
+};
+
+export const DETAIL_TEXT = {
+  purifier: { no: "no purifier", one: "purifier in one room", most: "purifiers in most rooms" },
+  orders: pair("deliveries", "orders"),
+  noOrders: pair("no deliveries", "no orders"),
+  flights: (domestic: string, international: string) => {
+    const parts: string[] = [];
+    if (domestic !== "0") parts.push(`${domestic} flights`);
+    if (international !== "0") parts.push(`${international} international`);
+    return parts.length ? parts.join(", ") : "no flights";
+  },
+};
+
+export const SETTINGS_TEXT = {
+  title: "Settings",
+  back: "Back",
+  fallbackName: "You",
+  yourLocation: "Your location",
+  loadFailed: "Couldn't load your settings. Check your connection and try again.",
+  lookFailed: "Your look changed on this device, but couldn't be saved to your account.",
+  guestTitle: pair("You're in guest mode", "You're using EDITH as a guest"),
+  guestText: pair(
+    "Your data lives on this phone only. Sign in to save your data, keep your streak and set up your Squad.",
+    "Your data is saved on this phone only. Sign in to keep your streak and set up your family.",
+  ),
+  signInSave: "Sign in to save your data",
+  myDetails: "My details",
+  look: "Look",
+  lookNames: pair("Hero", "Plain"),
+  lookNote: "Same app, same features. Only the style and tab names change.",
+  location: "Location",
+  locationAccess: "Location access",
+  access: { granted: "Allowed", denied: "Not allowed", prompt: "Not asked yet", unknown: "Unknown" },
+  changeCity: pair("Change city or area", "City or area"),
+  squad: pair("Squad", "Family"),
+  squadGuest: pair("Sign in to create your Squad", "Sign in to set up your family"),
+  squadSetup: pair("Set up your Squad", "Set up your family"),
+  account: "Account",
+  signedIn: pair("Signed in with Google", "Google"),
+  guestWord: "Guest",
+  onThisPhone: "On this phone",
+  signOut: "Sign out",
+  about: "About",
+  version: "Version",
+  versionValue: pair("1.1 · Hack the Circle build", "1.1"),
+  github: "Source code on GitHub",
+  githubUrl: "https://github.com/ashima19arora/edith",
+  howWeCalculate: "How we calculate",
+};
+
+export const CALCULATE = {
+  title: "How we calculate",
+  back: "Settings",
+  intro: "Where every number in EDITH comes from. Tap a section to open it.",
+  sections: [
+    {
+      title: "Your carbon footprint",
+      points: [
+        "Every activity is multiplied by an emission factor.",
+        "Electricity: 0.727 kg CO₂ per unit, from India's Central Electricity Authority. Home electricity and cooking gas are split between the people living there.",
+        "Own vehicle: distance ÷ mileage × fuel factor. Petrol is about 2.3 kg CO₂ per litre. If you skip mileage we assume 45 km/l for a two-wheeler and 15 km/l for a car.",
+        "Metro, bus, auto and cab use a typical figure per passenger-km. These are EDITH's estimates.",
+        "Food: about 0.6 kg a day on a vegetarian Indian diet and 1 kg on a non-vegetarian one, from published studies. Per-meal values are built from these.",
+        "Deliveries and flights are EDITH's estimates for now.",
+      ],
+    },
+    {
+      title: "How your monthly number stays accurate",
+      points: [
+        "During the month, electricity is an estimate from your household and appliances. It starts at about 180 units a month for 4 people, near a typical Delhi home.",
+        "Your bill arrives after the month ends, so it can correct that month's estimate and improve later ones.",
+        "Reading bill photos is coming soon.",
+      ],
+    },
+    {
+      title: "Air quality (AQI)",
+      points: [
+        "We use India's CPCB National AQI scale, on 24-hour averages (8-hour for ozone and carbon monoxide).",
+        "Pollutant data comes from Open-Meteo. It's modelled, so it can differ from a monitoring station near you.",
+        "Hourly charts use the same scale on each hour's reading, so they can differ from the headline number.",
+      ],
+    },
+    {
+      title: "Cigarettes and Lives",
+      points: [
+        "Cigarettes: 24-hour average PM2.5 ÷ 22. Berkeley Earth found 22 µg/m³ for a day is about one cigarette.",
+        "Lives: you start with 5 a day. Each usual outdoor hour costs 0 in Good or Satisfactory air, 0.25 in Moderate, 0.5 in Poor, 1 in Very Poor and 1.5 in Severe.",
+        "On Very Poor or Severe days, indoors without a purifier costs 0.5 more.",
+      ],
+    },
+    {
+      title: "What these numbers are and aren't",
+      points: [
+        "They're estimates to help you plan, not measurements.",
+        "Cigarettes and Lives are guides to exposure, not medical advice. For breathing trouble or chest pain, get medical help.",
+        "Your progress is only ever compared with your own start.",
+      ],
+    },
+  ],
+  sourcesTitle: "Sources",
+  sources: [
+    ["CEA (Central Electricity Authority)", "CO₂ Baseline Database v20.0, India's grid factor"],
+    ["CPCB", "National Air Quality Index, the AQI scale"],
+    ["Open-Meteo", "Air quality data and place search"],
+    ["Berkeley Earth", "The cigarette equivalent"],
+    ["AQLI 2025, University of Chicago", "Life expectancy figures"],
+    ["CSE", "Typical Delhi household electricity use"],
+    ["DMRC", "Delhi Metro fares"],
+  ] as const,
+};
+

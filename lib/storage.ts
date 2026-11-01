@@ -27,6 +27,7 @@ export interface Store {
   getBills(): Promise<Bill[]>;
   getMission(date: string): Promise<MissionEntry | null>;
   saveMission(entry: MissionEntry): Promise<void>;
+  getXp(): Promise<number>;
 }
 
 export type Account = { kind: "user"; id: string; email: string | null } | { kind: "guest" };
@@ -38,6 +39,7 @@ const CHECKINS_KEY = "edith.checkins";
 const ONE_OFFS_KEY = "edith.oneOffs";
 const BILLS_KEY = "edith.bills";
 const MISSIONS_KEY = "edith.missions";
+const XP_KEY = "edith.xp";
 const NEW_PROFILE: Profile = { displayName: null, mode: "hero", onboarded: false };
 
 function readJson<T>(key: string): T | null {
@@ -80,6 +82,9 @@ const guestStore: Store = {
       (m) => !(m.date === entry.date && m.missionId === entry.missionId),
     );
     localStorage.setItem(MISSIONS_KEY, JSON.stringify([...others, entry]));
+  },
+  async getXp() {
+    return (readJson<{ xp: number }[]>(XP_KEY) ?? []).reduce((sum, event) => sum + event.xp, 0);
   },
 };
 
@@ -180,6 +185,11 @@ function userStore(id: string): Store {
       );
       if (error) throw error;
     },
+    async getXp() {
+      const { data, error } = await supabase.from("xp_events").select("xp").eq("user_id", id);
+      if (error) throw error;
+      return (data ?? []).reduce((sum, event) => sum + event.xp, 0);
+    },
   };
 }
 
@@ -190,6 +200,28 @@ export async function getAccount(): Promise<Account | null> {
     if (data.user) return { kind: "user", id: data.user.id, email: data.user.email ?? null };
   }
   return localStorage.getItem(GUEST_KEY) ? { kind: "guest" } : null;
+}
+
+// When a guest signs in for the first time, their answers move to the new account.
+export async function adoptGuestData(account: Account): Promise<void> {
+  if (account.kind !== "user" || !localStorage.getItem(GUEST_KEY)) return;
+  const store = userStore(account.id);
+  const profile = await store.getProfile();
+  if (!profile.onboarded) {
+    const setup = readJson<SetupAnswers>(SETUP_KEY);
+    const guest = readJson<Profile>(PROFILE_KEY);
+    if (setup && guest?.onboarded) {
+      await store.saveSetup(setup);
+      await store.saveProfile({ mode: guest.mode, onboarded: true });
+      for (const mission of readJson<MissionEntry[]>(MISSIONS_KEY) ?? []) await store.saveMission(mission);
+    }
+  }
+  localStorage.removeItem(GUEST_KEY);
+}
+
+export async function signOut(): Promise<void> {
+  await createClient()?.auth.signOut();
+  localStorage.removeItem(GUEST_KEY);
 }
 
 export function startGuest() {

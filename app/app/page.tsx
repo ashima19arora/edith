@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { HomeScreen } from "@/components/home-screen";
-import { getAccount, storeFor, type Account, type Profile } from "@/lib/storage";
+import { adoptGuestData, getAccount, storeFor, type Account, type Profile } from "@/lib/storage";
 import { setMode } from "@/lib/theme";
 import type { SetupAnswers } from "@/lib/types";
 
@@ -17,6 +17,7 @@ export default function AppEntry() {
       const account = await getAccount();
       if (!account) return router.replace("/app/sign-in");
       try {
+        await adoptGuestData(account);
         const store = storeFor(account);
         const [profile, setup] = await Promise.all([store.getProfile(), store.getSetup()]);
         setMode(profile.mode);

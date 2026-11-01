@@ -1,4 +1,4 @@
-import { OPTIONS, RECAP_TEXT } from "./labels";
+import { DETAIL_TEXT, OPTIONS, RECAP_TEXT } from "./labels";
 import type { Fuel, Mode, Purifier, SetupAnswers, TimeBlock, TravelMode } from "./types";
 
 export const AREAS = [
@@ -197,6 +197,39 @@ export function finalizeSetup(d: SetupDraft): SetupAnswers {
   };
 }
 
+// Saved answers back into the form, for editing from Settings.
+export function draftFromAnswers(a: SetupAnswers): SetupDraft {
+  const wfh = a.trip.kind === "wfh";
+  return {
+    ...EMPTY_DRAFT,
+    location: a.location,
+    people: a.people,
+    homeType: a.homeType,
+    pets: a.pets,
+    extraCare: a.extraCare,
+    tripKind: a.trip.kind,
+    kmOneWay: wfh ? EMPTY_DRAFT.kmOneWay : a.trip.kmOneWay,
+    address: a.trip.address ?? "",
+    daysPerWeek: wfh ? EMPTY_DRAFT.daysPerWeek : a.trip.daysPerWeek,
+    mode: wfh ? null : a.trip.mode,
+    fuel: a.trip.fuel ?? null,
+    mileage: a.trip.mileage ? String(a.trip.mileage) : "",
+    outdoor: a.outdoorBlocks.length ? a.outdoorBlocks : ["indoors"],
+    exercise: a.exercise,
+    acs: a.acs,
+    acHoursBand: a.acHoursBand,
+    cooking: a.cooking,
+    cylinderLasts: a.cylinderLasts,
+    purifier: a.purifier,
+    billBand: a.billBand,
+    diet: a.diet,
+    nonVegFrequency: a.nonVegFrequency,
+    ordersPerWeek: a.ordersPerWeek,
+    domestic: a.flights.domestic,
+    international: a.flights.international,
+  };
+}
+
 function petsLine(pets: SetupAnswers["pets"]): string {
   const parts = (Object.keys(pets) as (keyof SetupAnswers["pets"])[])
     .filter((pet) => pets[pet] > 0)
@@ -216,5 +249,22 @@ export function recapLines(a: SetupAnswers, mode: Mode): string[] {
     petsLine(a.pets),
     `${a.acs === 0 ? RECAP_TEXT.noAc : RECAP_TEXT.ac(a.acs)} · ${OPTIONS.cookingShort[a.cooking]}`,
     `${OPTIONS.diet[a.diet]} · ${orders}`,
+  ];
+}
+
+// One line per setup section, for Settings > My details.
+export function detailLines(a: SetupAnswers, mode: Mode): string[] {
+  const place = OPTIONS.trip[a.trip.kind].toLowerCase();
+  const orders = a.ordersPerWeek === "none"
+    ? DETAIL_TEXT.noOrders[mode]
+    : `${OPTIONS.orders[a.ordersPerWeek]} ${DETAIL_TEXT.orders[mode]}`;
+  const diet = OPTIONS.diet[a.diet];
+  return [
+    [a.location.area, RECAP_TEXT.person(a.people), OPTIONS.homeType[a.homeType], petsLine(a.pets)].join(" · "),
+    a.trip.kind === "wfh"
+      ? RECAP_TEXT.wfh
+      : `${OPTIONS.mode[a.trip.mode]} to ${place} · ${a.trip.kmOneWay} km · ${a.trip.daysPerWeek} days`,
+    [a.acs === 0 ? RECAP_TEXT.noAc : RECAP_TEXT.ac(a.acs), OPTIONS.cookingShort[a.cooking], DETAIL_TEXT.purifier[a.purifier]].join(" · "),
+    [diet, orders, DETAIL_TEXT.flights(OPTIONS.domestic[a.flights.domestic], OPTIONS.international[a.flights.international])].join(" · "),
   ];
 }

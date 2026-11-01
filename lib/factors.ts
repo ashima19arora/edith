@@ -253,3 +253,6 @@ export const XP = {
 };
 
 export const RANK_THRESHOLDS = [0, 200, 500, 1000, 2000, 4000];
+
+// Midpoint of each setup answer for online orders a week.
+export const ORDERS_BAND_PER_WEEK = { none: 0, "1-3": 2, "4-7": 5.5, "8+": 10 };

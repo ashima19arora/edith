@@ -16,21 +16,16 @@
 </p>
 
 <p align="center">
-  <a href="https://edith-navy.vercel.app"><b>Try it live</b></a> ·
-  <a href="#two-styles-same-app"><b>See the two styles</b></a> ·
-  <a href="#how-the-numbers-work"><b>How the numbers work</b></a>
+  <a href="https://edith-navy.vercel.app"><b>Try it live</b></a> 
 </p>
 
 ## Table of contents
 
 - [The problem](#the-problem)
 - [What EDITH does](#what-edith-does)
-- [Two styles, same app](#two-styles-same-app)
 - [How the numbers work](#how-the-numbers-work)
-- [Project status](#project-status)
 - [Tech stack](#tech-stack)
 - [Run it locally](#run-it-locally)
-- [The team](#the-team)
 
 ## The problem
 
@@ -67,7 +62,7 @@ Yet the tools people have don't help them act on it:
 | **Grounded assistant**    | EDITH answers from your live air, routine and footprint.                                                     |
 | **Seasonal**              | A Diwali mode with this year's rules, the worst hours, and how to protect family and pets.                   |
 
-## Two styles, same app
+### Two styles, same app
 
 Pick a style at setup. Every feature and layout is the same in both, only the look and the wording change.
 
@@ -118,23 +113,6 @@ These are design prototypes. The numbers in them are sample data; the app comput
 - The AQI is computed from modelled Open-Meteo data, so it can differ from a nearby CPCB monitoring station.
 - "Lives" is a planning guide to exposure and has no medical meaning.
 
-## Project status
-
-EDITH is being built in the open, step by step. This table is kept honest: the full app is designed, and not all of it is in the working app yet.
-
-| Part                                                                | Status                                            |
-|---------------------------------------------------------------------|---------------------------------------------------|
-| Project setup, data model with row-level security                   | ✅ Built                                           |
-| Footprint, AQI, lives and streak calculations, with automated tests | ✅ Built                                           |
-| Sign-in, style picker and setup flow, in both modes                 | ✅ Built                                           |
-| Guest mode, with data stored on the device                          | ✅ Built                                           |
-| Google sign-in, with answers saved to Supabase                      | ✅ Built                                           |
-| Home, with live air, Go Time, lives and daily missions              | ✅ Built                                           |
-| Daily check-in, Air today                                           | ⏳ Designed, next to build                         |
-| My footprint, Progress, Family, EDITH assistant, Settings           | ⏳ Designed, to build                              |
-| Reading bill photos with Gemini                                     | ⏳ To build; setup asks for a rough amount for now |
-| Installable PWA, landing page                                       | ⏳ To build                                        |
-
 ## Tech stack
 
 | Layer                     | Choice                                                                                                                            |
@@ -169,6 +147,3 @@ npm test        # Calculation and setup tests
 npm run lint
 npm run build
 ```
-
-
-<p align="center">Built with ❤️ for India.</p>

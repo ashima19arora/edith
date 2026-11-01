@@ -1,5 +1,8 @@
 "use client";
 
+/* eslint-disable @next/next/no-location-assign-relative-destination --
+   Editing a section uses full page loads so the form and Settings always start from the saved answers. */
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BackIcon, CameraIcon, CheckIcon, CornerWeb, PinIcon, SpiderIcon } from "@/components/art";
@@ -8,14 +11,17 @@ import { ROAD_DISTANCE_FACTOR } from "@/lib/factors";
 import { FINISH, OPTIONS, SECTION_NAMES, SETUP_TEXT as TEXT, STEP_COPY } from "@/lib/labels";
 import {
   AREAS,
+  draftFromAnswers,
   EMPTY_DRAFT,
   finalizeSetup,
   isStepComplete,
   progressFill,
   recapLines,
+  SECTIONS,
   stepPosition,
   toggleExclusive,
   visibleSteps,
+  type SectionId,
   type SetupDraft,
   type StepId,
 } from "@/lib/setup";
@@ -525,11 +531,36 @@ function Finish({ answers, onEnter }: { answers: SetupAnswers; onEnter: () => vo
   );
 }
 
-export default function Setup() {
+// Opened from Settings > My details: one section, starting from the saved answers.
+function EditSection({ section }: { section: SectionId }) {
+  const [draft, setDraft] = useState<SetupDraft | null>(null);
+
+  useEffect(() => {
+    async function load() {
+      const account = await getAccount();
+      const saved = account && (await storeFor(account).getSetup());
+      if (saved) setDraft(draftFromAnswers(saved));
+      else window.location.assign("/app/settings");
+    }
+    load().catch(() => window.location.assign("/app/settings"));
+  }, []);
+
+  if (!draft) return null;
+  const first = SECTIONS.find((s) => s.id === section)!.steps[0];
+  return <Setup initial={{ draft, step: first }} editSection={section} />;
+}
+
+export default function SetupPage() {
+  const section = new URLSearchParams(window.location.search).get("section");
+  const valid = SECTIONS.find((s) => s.id === section)?.id;
+  return valid ? <EditSection section={valid} /> : <Setup />;
+}
+
+function Setup({ initial, editSection }: { initial?: SavedDraft; editSection?: SectionId }) {
   const router = useRouter();
   const mode = useMode();
   const [account, setAccount] = useState<Account | null>(null);
-  const [{ draft, step }, setState] = useState<SavedDraft>(loadDraft);
+  const [{ draft, step }, setState] = useState<SavedDraft>(() => initial ?? loadDraft());
   const [answers, setAnswers] = useState<SetupAnswers | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -542,8 +573,8 @@ export default function Setup() {
   }, [router]);
 
   useEffect(() => {
-    if (!answers) localStorage.setItem(DRAFT_KEY, JSON.stringify({ draft, step }));
-  }, [draft, step, answers]);
+    if (!answers && !editSection) localStorage.setItem(DRAFT_KEY, JSON.stringify({ draft, step }));
+  }, [draft, step, answers, editSection]);
 
   if (answers) {
     return (
@@ -553,13 +584,15 @@ export default function Setup() {
     );
   }
 
-  const steps = visibleSteps(draft);
+  const allSteps = visibleSteps(draft);
+  const inSection = editSection && SECTIONS.find((s) => s.id === editSection)!.steps;
+  const steps = inSection ? allSteps.filter((s) => inSection.includes(s)) : allSteps;
   const index = steps.indexOf(step);
   const position = stepPosition(step, draft);
   const fills = progressFill(step, draft);
   const copy = STEP_COPY[step];
   const isLast = index === steps.length - 1;
-  const hasWebBack = mode === "hero" || index > 0;
+  const hasWebBack = mode === "hero" || index > 0 || Boolean(editSection);
 
   function update(changes: Partial<SetupDraft>) {
     setState((current) => ({ ...current, draft: { ...current.draft, ...changes } }));
@@ -571,8 +604,9 @@ export default function Setup() {
   }
 
   function back() {
-    if (index === 0) router.push("/app/style");
-    else go(steps[index - 1]);
+    if (index > 0) go(steps[index - 1]);
+    else if (editSection) window.location.assign("/app/settings");
+    else router.push("/app/style");
   }
 
   async function finish(final: SetupDraft) {
@@ -583,6 +617,7 @@ export default function Setup() {
       const result = finalizeSetup(final);
       const store = storeFor(account);
       await store.saveSetup(result);
+      if (editSection) return window.location.assign("/app/settings");
       await store.saveProfile({ mode, onboarded: true });
       localStorage.removeItem(DRAFT_KEY);
       setAnswers(result);
@@ -662,7 +697,7 @@ export default function Setup() {
 
         <footer className="screen-foot">
           <button type="button" className="cta" disabled={!isStepComplete(step, draft) || saving} onClick={next}>
-            {isLast ? TEXT.finish : TEXT.next[mode]}
+            {isLast ? (editSection ? TEXT.saveEdit : TEXT.finish) : TEXT.next[mode]}
           </button>
         </footer>
       </main>
