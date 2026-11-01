@@ -10,14 +10,14 @@
 </p>
 
 <p align="center">
-  <a href="https://edith-navy.vercel.app"><b>Try it live</b></a>
-</p>
-
-<p align="center">
   <img src="https://img.shields.io/badge/track-sustainability%20%26%20social%20impact-brightgreen" alt="Track: Sustainability and Social Impact">
   <img src="https://img.shields.io/badge/built%20for-Hack%20the%20Circle-blue" alt="Built for Hack the Circle">
   <img src="https://img.shields.io/badge/air%20scale-CPCB%20India-orange" alt="Air scale: CPCB India">
   <img src="https://img.shields.io/badge/license-MIT-lightgrey" alt="License: MIT">
+</p>
+
+<p align="center">
+  <a href="https://edith-navy.vercel.app"><b>Try it live</b></a>
 </p>
 
 ## The problem
@@ -35,7 +35,8 @@ Delhi checks the AQI every day. The number never says what to do next.
 
 ## What EDITH tracks
 
-The air damages your health. Your lifestyle damages the air. EDITH tracks both and shows you the first change worth making.
+The air damages your health. Your lifestyle damages the air.<br>
+EDITH tracks both and shows you the first change worth making.
 
 | Damage taken | Damage dealt |
 | --- | --- |
@@ -50,38 +51,13 @@ The air damages your health. Your lifestyle damages the air. EDITH tracks both a
 
 **Comic book or calm: you choose.** Fight smog as a superhero in a comic-book city, or keep it clean and minimal. Switch any time.
 
-<table>
-  <tr>
-    <td align="center" width="33%"><img src="public/landing/feature-style.png" alt="Pick your style screen"><br><sub>Pick your style</sub></td>
-    <td align="center" width="33%"><img src="public/landing/feature-home-hero.jpg" alt="Home in Hero mode"><br><sub>Hero</sub></td>
-    <td align="center" width="33%"><img src="public/landing/feature-home-plain.jpg" alt="Home in Plain mode"><br><sub>Plain</sub></td>
-  </tr>
-</table>
+<p align="center">
+  <img src="public/landing/readme-styles.jpg" width="100%" alt="Home in Hero mode, Home in Plain mode, and the Pick your style screen">
+</p>
 
-<table>
-  <tr>
-    <td align="center" valign="top" width="33%"><b>Know when to step out</b></td>
-    <td align="center" valign="top" width="33%"><b>A 30-second check-in</b></td>
-    <td align="center" valign="top" width="33%"><b>See what really drives your footprint</b></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="public/landing/feature-air.jpg" alt="Air today"></td>
-    <td align="center"><img src="public/landing/feature-checkin.jpg" alt="Daily check-in"></td>
-    <td align="center"><img src="public/landing/feature-footprint.jpg" alt="My footprint"></td>
-  </tr>
-  <tr>
-    <td align="center" valign="top"><b>A reason to come back tomorrow</b></td>
-    <td align="center" valign="top"><b>Looks out for everyone at home</b></td>
-    <td align="center" valign="top"><b>Ask it anything about your air</b></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="public/landing/feature-ranks.jpg" alt="Ranks"></td>
-    <td align="center"><img src="public/landing/feature-family.jpg" alt="Family"></td>
-    <td align="center"><img src="public/landing/feature-assistant.jpg" alt="EDITH assistant"></td>
-  </tr>
-</table>
-
-<sub>Screens from the working app. Footprint, Ranks and Family show demo data.</sub>
+<p align="center">
+  <img src="public/landing/readme-features.jpg" width="100%" alt="Six features: know when to step out, a 30-second check-in, your biggest source, daily streaks, your whole family, and ask EDITH">
+</p>
 
 **Built for India, not adapted for it.** CPCB's AQI scale, India's own grid emission factor, Delhi Metro fares, LPG cylinders, autos and two-wheelers, dal and paneer. EDITH never suggests something that doesn't fit your life, so every tip is one you could actually follow tomorrow.
 
@@ -106,7 +82,7 @@ These are estimates to help you plan, not measurements or medical advice. Some f
 EDITH's next steps focus on two things: replacing estimates with real measurements, and making the daily habit take even less effort.
 
 - **Air readings from CPCB stations.** Show your nearest CPCB monitoring station beside our modelled number, using the hourly data published on data.gov.in. Open-Meteo stays for the forecast, since stations only report the present.
-- **Indoor air sensor.** A home-built ESP32 with a PM2.5 sensor costs about ₹1,000–1,500 and shows real indoor air and how much your purifier helps. Popular purifier brands have no official APIs, so a sensor of your own is more reliable than integrating with them.
+- **Indoor air sensor.** A home-built ESP32 with a PM2.5 sensor costs about ₹2,000–3,000 and shows real indoor air and how much your purifier helps, without depending on any purifier brand's app.
 - **Smart plugs for the AC.** Plugs with energy monitoring give real kWh for the biggest appliance, which replaces the AC-hours estimate.
 - **Voice check-in.** Say "veg all day, Metro both ways, one Swiggy order" and EDITH fills in the steps.
 - **Daily reminder.** A phone notification when your air turns bad or check-in is due, through the installable app.

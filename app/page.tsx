@@ -229,7 +229,8 @@ export default function Landing() {
           </div>
           <p className="lp-note">{T.numbers.note}</p>
 
-          <h3 id="tech" className="lp-tech-title">{T.numbers.techTitle}</h3>
+          <div id="tech" className="lp-tech-block">
+          <h3 className="lp-tech-title">{T.numbers.techTitle}</h3>
           <div className="lp-tech">
             {T.numbers.tech.map(([icon, colour, name, line], i) => (
               <article key={name} className="lp-box" data-reveal="up" style={{ transitionDelay: `${(i % 4) * 0.08}s` }}>
@@ -242,6 +243,7 @@ export default function Landing() {
                 <p>{line}</p>
               </article>
             ))}
+          </div>
           </div>
         </section>
 

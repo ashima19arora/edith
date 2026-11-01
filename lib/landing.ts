@@ -114,7 +114,7 @@ export const LANDING = {
     title: ["From estimates ", "to real readings."],
     lead: "What we’re building next: real sensors in the home, fewer taps every day, and EDITH on your home screen.",
     cards: [
-      { tone: "yellow", kind: "Hardware", title: "Indoor air sensor", text: "A home-built ESP32 with a PM2.5 sensor shows the real air inside your home, and how much your purifier actually helps. Purifier brands have no official APIs, so a sensor of your own is more reliable.", pill: "₹1,000–1,500 to build" },
+      { tone: "yellow", kind: "Hardware", title: "Indoor air sensor", text: "A home-built ESP32 with a PM2.5 sensor shows the real air inside your home, and how much your purifier actually helps, without depending on any purifier brand's app.", pill: "About ₹2,000–3,000 to build" },
       { tone: "blue", kind: "Hardware", title: "Smart plugs for the AC", text: "Plugs with energy monitoring give real kWh for the biggest appliance at home, replacing the AC-hours estimate.", pill: "Real kWh, no guessing" },
       { tone: "red", kind: "In the app", title: "Voice check-in", text: "Say “veg all day, Metro both ways, one Swiggy order” and EDITH fills in the steps.", pill: "Check-in, hands-free" },
       { tone: "green", kind: "In the app", title: "Daily reminder", text: "A phone notification when your air turns bad or your check-in is due, through the installable app.", pill: "Never miss Go Time" },
