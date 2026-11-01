@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { geminiConfigured, generateWithGemini } from "@/lib/gemini";
 
 const TIME_LIMIT_MS = 25000; // The caller's fallback is better than a long wait
-const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 const MAX_QUESTION = 500;
 const MAX_CONTEXT = 6000;
 const MAX_HISTORY = 8;
@@ -16,9 +16,7 @@ const INSTRUCTIONS =
 
 // Typed questions go to Gemini along with the user's numbers. The caller shows a friendly fallback on any error.
 export async function POST(request: NextRequest) {
-  const key = process.env.GEMINI_API_KEY;
-  const model = process.env.GEMINI_MODEL;
-  if (!key || !model) return NextResponse.json({ error: "AI not configured" }, { status: 503 });
+  if (!geminiConfigured()) return NextResponse.json({ error: "AI not configured" }, { status: 503 });
 
   const body = await request.json().catch(() => null);
   const question = typeof body?.question === "string" ? body.question.trim() : "";
@@ -30,16 +28,14 @@ export async function POST(request: NextRequest) {
   const earlier = history.filter((h): h is string => typeof h === "string").map((h) => h.slice(0, MAX_QUESTION));
 
   try {
-    const response = await fetch(`${GEMINI_URL}/${encodeURIComponent(model)}:generateContent`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-      signal: AbortSignal.timeout(TIME_LIMIT_MS),
-      body: JSON.stringify({
+    const response = await generateWithGemini(
+      {
         systemInstruction: { parts: [{ text: INSTRUCTIONS }] },
         contents: [{ parts: [{ text: `DATA: ${context}\nHISTORY: ${JSON.stringify(earlier)}\nQUESTION: ${question}` }] }],
         generationConfig: { responseMimeType: "application/json" },
-      }),
-    });
+      },
+      TIME_LIMIT_MS,
+    );
     if (!response.ok) throw new Error(`Gemini returned ${response.status}`);
 
     const data = await response.json();

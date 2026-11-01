@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { geminiConfigured, generateWithGemini } from "@/lib/gemini";
 
 const TIME_LIMIT_MS = 30000; // The caller's fallback is better than a long wait
-const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 const MAX_BASE64 = 4_000_000; // About 3 MB of image, under Vercel's request limit
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -14,9 +14,7 @@ const PROMPT =
 // Reads the units and billing period from a bill photo. The image isn't stored. The caller asks
 // the user to type the units on any error.
 export async function POST(request: NextRequest) {
-  const key = process.env.GEMINI_API_KEY;
-  const model = process.env.GEMINI_MODEL;
-  if (!key || !model) return NextResponse.json({ error: "AI not configured" }, { status: 503 });
+  if (!geminiConfigured()) return NextResponse.json({ error: "AI not configured" }, { status: 503 });
 
   const body = await request.json().catch(() => null);
   const image = typeof body?.image === "string" ? body.image : "";
@@ -26,15 +24,13 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const response = await fetch(`${GEMINI_URL}/${encodeURIComponent(model)}:generateContent`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-      signal: AbortSignal.timeout(TIME_LIMIT_MS),
-      body: JSON.stringify({
+    const response = await generateWithGemini(
+      {
         contents: [{ parts: [{ text: PROMPT }, { inlineData: { mimeType: mime, data: image } }] }],
         generationConfig: { responseMimeType: "application/json" },
-      }),
-    });
+      },
+      TIME_LIMIT_MS,
+    );
     if (!response.ok) throw new Error(`Gemini returned ${response.status}`);
 
     const data = await response.json();

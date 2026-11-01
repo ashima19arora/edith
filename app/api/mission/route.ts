@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { geminiConfigured, generateWithGemini } from "@/lib/gemini";
 
 const TIME_LIMIT_MS = 5000; // The caller's fallback is better than a long wait
-const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 const MAX_CANDIDATES = 40;
 
 interface Candidate {
@@ -17,9 +17,7 @@ function isCandidate(c: Partial<Candidate>): c is Candidate {
 // Asks Gemini to choose from missions the app already found applicable. It can't invent one:
 // anything outside the list is rejected, and the caller keeps its rule-based pick on any error.
 export async function POST(request: NextRequest) {
-  const key = process.env.GEMINI_API_KEY;
-  const model = process.env.GEMINI_MODEL;
-  if (!key || !model) return NextResponse.json({ error: "AI not configured" }, { status: 503 });
+  if (!geminiConfigured()) return NextResponse.json({ error: "AI not configured" }, { status: 503 });
 
   const body = await request.json().catch(() => null);
   const candidates: Partial<Candidate>[] = Array.isArray(body?.candidates) ? body.candidates : [];
@@ -36,15 +34,13 @@ export async function POST(request: NextRequest) {
     (candidates as Candidate[]).map((c) => `${c.id}: ${c.text} (saves ${c.kg.toFixed(1)} kg CO2)`).join("\n");
 
   try {
-    const response = await fetch(`${GEMINI_URL}/${encodeURIComponent(model)}:generateContent`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-      signal: AbortSignal.timeout(TIME_LIMIT_MS),
-      body: JSON.stringify({
+    const response = await generateWithGemini(
+      {
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { responseMimeType: "application/json" },
-      }),
-    });
+      },
+      TIME_LIMIT_MS,
+    );
     if (!response.ok) throw new Error(`Gemini returned ${response.status}`);
 
     const data = await response.json();
