@@ -18,6 +18,8 @@ import {
   pickMission,
   type FootprintInfo,
 } from "@/lib/home";
+import type { FamilyProfile } from "@/lib/family";
+import { loadHousehold } from "@/lib/family-store";
 import { HOME_TEXT as TEXT, LABELS } from "@/lib/labels";
 import { currentStreak } from "@/lib/progress";
 import type { Account, MissionEntry, Profile } from "@/lib/storage";
@@ -117,6 +119,7 @@ export function HomeScreen({ account, profile, setup }: HomeScreenProps) {
   const [missionId, setMissionId] = useState<string | null>(null);
   const [entry, setEntry] = useState<MissionEntry | null>(null);
   const [billDue, setBillDue] = useState(false);
+  const [profiles, setProfiles] = useState<FamilyProfile[]>([]);
 
   const context = useMemo<MissionContext>(() => {
     const latest = [...checkins].sort((a, b) => b.date.localeCompare(a.date))[0];
@@ -126,6 +129,13 @@ export function HomeScreen({ account, profile, setup }: HomeScreenProps) {
   useEffect(() => {
     loadAir(setup).then(setAir);
   }, [setup]);
+
+  useEffect(() => {
+    if (account.kind !== "user") return;
+    loadHousehold(account.id, today.date)
+      .then((house) => setProfiles(house?.profiles ?? []))
+      .catch(() => setProfiles([]));
+  }, [account, today.date]);
 
   useEffect(() => {
     async function load() {
@@ -153,7 +163,7 @@ export function HomeScreen({ account, profile, setup }: HomeScreenProps) {
   const data = air?.air ?? null;
   const go = data ? nextGoTime(data.hours, today.date, today.tomorrow, today.time) : null;
   const category = data?.category ?? null;
-  const alert = careAlert(mode, setup, category, go);
+  const alert = careAlert(mode, setup, category, go, profiles);
   const bars = data ? chartBars(data.hours, today.date, go) : [];
   const todayHours = data?.hours.filter((h) => h.time.startsWith(today.date)) ?? [];
   const lives = data ? livesInfo(todayHours, setup, data.aqi, go) : null;

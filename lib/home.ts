@@ -11,6 +11,7 @@ import {
   SPEED_KMH,
 } from "./factors";
 import { biggestSource, dailyBreakdown, isWinter, monthToDate, sameDateLastMonth, totalKg } from "./footprint";
+import type { FamilyProfile } from "./family";
 import { HOME_TEXT } from "./labels";
 import { blockLoss, exerciseBlocks, predictedLivesLost } from "./lives";
 import type {
@@ -84,23 +85,38 @@ export interface CareAlert {
 }
 
 // Only when the air is Poor or worse, and only for those it matters to at this home.
-export function careAlert(mode: Mode, setup: SetupAnswers, category: AqiCategory | null, go: GoTimeInfo | null): CareAlert | null {
+export function careAlert(
+  mode: Mode,
+  setup: SetupAnswers,
+  category: AqiCategory | null,
+  go: GoTimeInfo | null,
+  profiles: FamilyProfile[] = [],
+): CareAlert | null {
   if (!category || !isBad(category)) return null;
   const text = HOME_TEXT.alert[mode];
+  // Real names from family profiles replace the general words for the same people.
+  const named = (kind: FamilyProfile["kind"]) => profiles.filter((p) => p.kind === kind).map((p) => p.name);
+  const children = named("child");
+  const elders = named("elder");
   const groups: string[] = [];
-  if (setup.extraCare.includes("children")) groups.push(text.children);
-  if (setup.extraCare.includes("elderly")) groups.push(text.elderly);
+  if (children.length) groups.push(...children);
+  else if (setup.extraCare.includes("children")) groups.push(text.children);
+  if (elders.length) groups.push(...elders);
+  else if (setup.extraCare.includes("elderly")) groups.push(text.elderly);
   if (setup.extraCare.includes("breathing") || setup.extraCare.includes("heart")) groups.push(text.breathing);
 
   const clean = go && !go.tomorrow && !isBad(categoryFor(go.index));
-  const who = groups.join(" and ");
+  const who = groups.length > 1 ? `${groups.slice(0, -1).join(", ")} and ${groups[groups.length - 1]}` : (groups[0] ?? "");
   const people = !who ? null : clean ? text.insideTill(who, clock(hourOf(go.window.start))) : text.insideToday(who);
 
   const { dog, cat, bird, other } = setup.pets;
+  const petProfiles = profiles.filter((p) => p.kind === "pet");
+  const dogNames = petProfiles.filter((p) => p.petType === "dog").map((p) => p.name);
   const petLines: string[] = [];
-  if (dog > 0) petLines.push(text.dog(dog));
-  if (bird > 0) petLines.push(text.bird);
-  if (cat > 0 || other > 0) petLines.push(text.otherPets);
+  if (dogNames.length) petLines.push(text.namedDog(dogNames.join(" and ")));
+  else if (dog > 0) petLines.push(text.dog(dog));
+  if (bird > 0 || petProfiles.some((p) => p.petType === "bird")) petLines.push(text.bird);
+  if (cat > 0 || other > 0 || petProfiles.some((p) => p.petType === "cat" || p.petType === "other")) petLines.push(text.otherPets);
   const pets = petLines.length ? petLines.join(" ") : null;
 
   return people || pets ? { people, pets } : null;

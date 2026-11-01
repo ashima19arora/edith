@@ -100,6 +100,22 @@ describe("care alert", () => {
   });
 });
 
+describe("care alert names", () => {
+  const dadi = { id: "1", kind: "elder" as const, name: "Dadi", careNeeds: [], petType: null, outdoorBlocks: [] };
+  const eva = { id: "2", kind: "pet" as const, name: "Eva", careNeeds: [], petType: "dog" as const, outdoorBlocks: [] };
+
+  it("uses real names from family profiles", () => {
+    const alert = careAlert("hero", setup, "Very Poor", go, [dadi, eva])!;
+    expect(alert.people).toBe("Keep the little ones and Dadi inside till 2 PM.");
+    expect(alert.pets).toBe("Walk Eva during Go Time, and keep it short.");
+  });
+
+  it("alerts for a profile even if setup didn't mention them", () => {
+    const quiet = { ...setup, extraCare: ["none" as const], pets: { dog: 0, cat: 0, bird: 0, other: 0 } };
+    expect(careAlert("plain", quiet, "Poor", go, [dadi])!.people).toBe("Keep Dadi inside till 2 PM.");
+  });
+});
+
 describe("chart", () => {
   it("has nine bars and marks the window", () => {
     const bars = chartBars(cleanAfternoon, DATE, go);
