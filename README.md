@@ -2,11 +2,11 @@
   <img src="public/brand/edith-wordmark.png" alt="EDITH" width="420">
 </p>
 
-<h3 align="center">Know your air. Own your share.</h3>
+<h3 align="center">Your friendly neighbourhood air defender.</h3>
 
 <p align="center">
   <b>Environmental Defence &amp; Impact Tracking Hero</b><br>
-  Live air quality and carbon tracking, built around how India actually lives.
+  Live air quality and a personal carbon footprint in one app, built around Indian homes, routines and rupees.
 </p>
 
 <p align="center">
@@ -15,96 +15,81 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/track-sustainability%20%26%20social%20impact-brightgreen" alt="Track: Sustainability and Social Impact">
+  <img src="https://img.shields.io/badge/built%20for-Hack%20the%20Circle-blue" alt="Built for Hack the Circle">
+  <img src="https://img.shields.io/badge/air%20scale-CPCB%20India-orange" alt="Air scale: CPCB India">
   <img src="https://img.shields.io/badge/license-MIT-lightgrey" alt="License: MIT">
 </p>
 
 ## The problem
 
-Air pollution takes about **8 years** off a Delhi resident's life, and nearly half of Delhi's pollution comes from local sources ([AQLI 2025, University of Chicago](https://aqli.epic.uchicago.edu/)). People know the air is bad. They just can't do much with what they're told about it.
+*Every city has a villain. Delhi's is invisible, and the apps we have only tell you its name.*
 
-- **An AQI number isn't an answer.** "AQI 340" won't tell you if your mother can go for her walk, or when today is safest to step out.
-- **Carbon calculators weren't made for India.** Foreign units, foreign averages, and advice like "buy an EV" that doesn't fit most lives here.
+Air pollution takes about **8 years** off a Delhi resident's life, and nearly half of Delhi's pollution comes from local sources ([AQLI 2025, University of Chicago](https://aqli.epic.uchicago.edu/)).
+
+Delhi checks the AQI every day. The number never says what to do next.
+
+- **An AQI is a score, not a plan.** "340" doesn't tell you whether Dadi's morning walk is safe, or when the air clears enough to step out.
+- **Carbon calculators weren't made for India.** Foreign units, foreign averages, and advice like "install rooftop solar" when you live in a rented flat.
 - **A total changes nothing.** Knowing you emit 2 tonnes a year doesn't tell you which one habit to change first, or what you'd save.
 - **Air apps and carbon apps never meet.** One shows what you breathe, the other what you emit, and nothing connects the two.
 
-## What EDITH does
+## What EDITH tracks
 
-EDITH answers two questions most people never get a straight answer to: is it safe to go out, and what can I actually change?
+The air damages your health. Your lifestyle damages the air. EDITH tracks both and shows you the first change worth making.
 
-| Your air | Your impact |
+| Damage taken | Damage dealt |
 | --- | --- |
 | Live AQI on India's own CPCB scale | Your carbon footprint, from a 30-second daily check-in |
-| What you breathed today, in cigarettes and "lives" | Kept accurate by your monthly electricity bill |
-| The cleanest two hours of your day | The one source that matters most for you |
+| Today's damage to your lungs, as cigarettes' worth of smoke | Kept accurate by your monthly electricity bill |
+| A safe window for your walk, so it does your lungs good instead of harm | The biggest part of your footprint, named: your commute, your AC or your food |
 | Alerts for parents, children and pets | Cuts that fit your life, in kg CO2 and rupees |
 
 ## Features
 
 **One sentence before any chart.** Most air apps open with a wall of numbers, graphs and tables. EDITH opens by telling you what to do today, in one line, and keeps the detail a tap away for when you want it.
 
+**Comic book or calm: you choose.** Fight smog as a superhero in a comic-book city, or keep it clean and minimal. Switch any time.
+
 <table>
   <tr>
-    <td colspan="2" align="center" valign="top" width="66%">
-      <b>Comic book or calm: you choose</b><br>
-      <sub>Fight smog as a superhero in a comic-book city, or keep it clean and minimal. Switch any time.</sub>
-    </td>
-    <td align="center" valign="top" width="33%">
-      <b>Know when to step out</b><br>
-      <sub>Go Time finds your cleanest two hours, from an hour-by-hour forecast for your area.</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center"><img src="screenshots/feature-home-hero.jpg" alt="Home in Hero mode, from the working app"><br><sub>Hero</sub></td>
-    <td align="center"><img src="screenshots/feature-home-plain.jpg" alt="Home in Plain mode, from the working app"><br><sub>Plain</sub></td>
-    <td align="center"><img src="screenshots/feature-air.jpg" alt="Air today, from the working app"><br><sub>Working app</sub></td>
-  </tr>
-  <tr>
-    <td align="center" valign="top">
-      <b>A 30-second check-in</b><br>
-      <sub>Already filled in from your routine. Most days you just confirm it.</sub>
-    </td>
-    <td align="center" valign="top">
-      <b>See what really drives your footprint</b><br>
-      <sub>Your biggest source, and cuts priced in kg and rupees using your own distance and fuel.</sub>
-    </td>
-    <td align="center" valign="top">
-      <b>A reason to come back tomorrow</b><br>
-      <sub>Your city lights up as you show up: streaks, ranks and badges, measured only against your own start.</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center"><img src="screenshots/feature-checkin.jpg" alt="Daily check-in, from the working app"><br><sub>Working app</sub></td>
-    <td align="center"><img src="screenshots/feature-footprint.jpg" alt="My footprint, from the working app with demo history"><br><sub>Working app, demo history</sub></td>
-    <td align="center"><img src="screenshots/feature-ranks.jpg" alt="Ranks, from the working app with demo progress"><br><sub>Working app, demo progress</sub></td>
-  </tr>
-  <tr>
-    <td align="center" valign="top">
-      <b>Looks out for everyone at home</b><br>
-      <sub>"Keep Dadi inside till 2." "Walk the dog during Go Time." A warning for each of them, before the air turns.</sub>
-    </td>
-    <td align="center" valign="top">
-      <b>Ask it anything about your air</b><br>
-      <sub>"Is it safe for Dadi to go out?" EDITH answers from your forecast, your routine and your family, not generic advice.</sub>
-    </td>
-    <td align="center" valign="top">
-      <b>Ready for Diwali</b><br>
-      <sub>This year's cracker rules, the worst hours, how to protect family and pets, and how to report a violation.</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center"><img src="screenshots/feature-family.jpg" alt="Family design"><br><sub>Design preview</sub></td>
-    <td align="center"><img src="screenshots/feature-assistant.jpg" alt="EDITH assistant design"><br><sub>Design preview</sub></td>
-    <td align="center"><img src="screenshots/feature-diwali.jpg" alt="Diwali guide, from the working app"><br><sub>Working app</sub></td>
+    <td align="center" width="33%"><img src="screenshots/feature-home-hero.jpg" alt="Home in Hero mode"><br><sub>Hero</sub></td>
+    <td align="center" width="33%"><img src="screenshots/feature-home-plain.jpg" alt="Home in Plain mode"><br><sub>Plain</sub></td>
+    <td align="center" width="33%"><img src="screenshots/feature-style.jpg" alt="Pick your style screen"><br><sub>Pick your style</sub></td>
   </tr>
 </table>
 
-**Built for India, not adapted for it.** CPCB's AQI scale, India's own grid emission factor, Delhi Metro fares, LPG cylinders, autos and two-wheelers, dal and paneer. EDITH never suggests something that doesn't fit your life, so nobody who already rides the Metro gets told to take the Metro.
+<table>
+  <tr>
+    <td align="center" valign="top" width="33%"><b>Know when to step out</b></td>
+    <td align="center" valign="top" width="33%"><b>A 30-second check-in</b></td>
+    <td align="center" valign="top" width="33%"><b>See what really drives your footprint</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/feature-air.jpg" alt="Air today"></td>
+    <td align="center"><img src="screenshots/feature-checkin.jpg" alt="Daily check-in"></td>
+    <td align="center"><img src="screenshots/feature-footprint.jpg" alt="My footprint"></td>
+  </tr>
+  <tr>
+    <td align="center" valign="top"><b>A reason to come back tomorrow</b></td>
+    <td align="center" valign="top"><b>Looks out for everyone at home</b></td>
+    <td align="center" valign="top"><b>Ask it anything about your air</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/feature-ranks.jpg" alt="Ranks"></td>
+    <td align="center"><img src="screenshots/feature-family.jpg" alt="Family"></td>
+    <td align="center"><img src="screenshots/feature-assistant.jpg" alt="EDITH assistant"></td>
+  </tr>
+</table>
+
+<sub>Screens from the working app. Footprint, Ranks and Family show demo data.</sub>
+
+**Built for India, not adapted for it.** CPCB's AQI scale, India's own grid emission factor, Delhi Metro fares, LPG cylinders, autos and two-wheelers, dal and paneer. EDITH never suggests something that doesn't fit your life, so every tip is one you could actually follow tomorrow.
 
 ## How the numbers work
 
 **Footprint = what you did × its emission factor.** Air quality uses CPCB's method on [Open-Meteo](https://open-meteo.com/en/docs/air-quality-api) data.
 
-| | | Source |
+| | | |
 | --- | --- | --- |
 | Electricity | 0.727 kg CO2 per unit | CEA Baseline Database v20.0 |
 | AQI | CPCB National AQI bands | [CPCB, via IES](https://ies.gov.in/arthapedia/concept/national-air-quality-index) |
@@ -139,4 +124,11 @@ npm install
 npm run dev
 ```
 
-Then open http://localhost:3000. Guest mode needs no keys. For Google sign-in, copy `.env.example` to `.env.local`, add your Supabase keys, and run [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) in the Supabase SQL editor.
+Then open http://localhost:3000. Guest mode needs no keys. For Google sign-in and Family, copy `.env.example` to `.env.local`, add your Supabase keys, and run the files in [`supabase/migrations`](supabase/migrations) in the Supabase SQL editor, in order.
+
+<br>
+
+<p align="center">
+  <i>With great air comes great responsibility.</i><br>
+  Built with ❤️ for India
+</p>
