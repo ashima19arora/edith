@@ -10059,6 +10059,20 @@ input[type="range"]::-moz-range-thumb {
   }
 }
 
+.nav-brand {
+  display: none;
+}
+
+.home-logo img {
+  display: block;
+  border-radius: 10px;
+}
+
+/* Only one skyline fits on a phone; laptops line up three so the windows keep their shape. */
+.home-sky .skyline:not(:first-child) {
+  display: none;
+}
+
 /* Desktop layout, 768px and up. Everything below 768px stays exactly as designed for phones. */
 
 @media (min-width: 768px) {
@@ -10107,6 +10121,43 @@ input[type="range"]::-moz-range-thumb {
   [data-mode="plain"] .app-nav {
     border-right: 0.5px solid rgb(60 60 67 / 0.29);
   }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding: 0 8px;
+    color: var(--yellow);
+    font-family: var(--comic);
+    font-size: 26px;
+    letter-spacing: 1px;
+  }
+
+  .nav-brand img {
+    border-radius: 8px;
+  }
+
+  [data-mode="plain"] .nav-brand {
+    color: var(--plain-text);
+    font-family: inherit;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  .home-logo {
+    display: none;
+  }
+
+  .home-sky .skyline,
+  .home-sky .skyline:not(:first-child) {
+    display: block;
+    width: 33.4%;
+  }
+
+  .home-sky .skyline:nth-child(2) { left: 33.3%; }
+  .home-sky .skyline:nth-child(3) { left: 66.6%; }
 
   .nav-item {
     flex: none;
@@ -10297,5 +10348,31 @@ input[type="range"]::-moz-range-thumb {
 @media (min-width: 1100px) {
   .badges {
     grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  /* Home's four panels share one row, so the page fits a laptop screen more easily */
+  .home-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .panel-go,
+  .panel-mission {
+    margin-top: 0;
+  }
+
+  .panel-go {
+    margin-left: -6px;
+  }
+
+  [data-mode="plain"] .home-grid .panel {
+    margin: 0;
+  }
+
+  .home-headline {
+    margin-top: 40px;
+  }
+
+  .says-text {
+    font-size: 26px;
   }
 }

@@ -347,6 +347,8 @@ export const LEGAL = {
   ],
 };
 
+export const BRAND = { name: "EDITH", homeLabel: "EDITH home page" };
+
 export const NAV = {
   home: { hero: "City", plain: "Home", href: "/app" },
   air: { hero: "Airspace", plain: "Air Today", href: "/app/air" },

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { MISSIONS, type MissionContext } from "@/config/missions";
 import { loadAir, type AirResult } from "@/lib/air";
@@ -20,7 +21,7 @@ import {
 } from "@/lib/home";
 import type { FamilyProfile } from "@/lib/family";
 import { loadHousehold } from "@/lib/family-store";
-import { HOME_TEXT as TEXT, LABELS } from "@/lib/labels";
+import { BRAND, HOME_TEXT as TEXT, LABELS } from "@/lib/labels";
 import { currentStreak } from "@/lib/progress";
 import type { Account, MissionEntry, Profile } from "@/lib/storage";
 import { storeFor } from "@/lib/storage";
@@ -197,6 +198,8 @@ export function HomeScreen({ account, profile, setup }: HomeScreenProps) {
       <main className="screen home halftone">
         <div className="home-sky" aria-hidden="true">
           <Skyline still />
+          <Skyline still />
+          <Skyline still />
         </div>
 
         <header className="home-head">
@@ -210,6 +213,9 @@ export function HomeScreen({ account, profile, setup }: HomeScreenProps) {
             {mode === "plain" && <p className="home-place">➤ {area ?? TEXT.yourLocation}</p>}
           </div>
           <div className="home-actions">
+            <Link href="/" className="home-logo" aria-label={BRAND.homeLabel}>
+              <Image src="/brand/edith-icon.png" alt="" width={44} height={44} />
+            </Link>
             <Link href="/app/family" className="head-btn head-family">
               <span className="head-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">

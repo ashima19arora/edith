@@ -1,8 +1,9 @@
 "use client";
 
 import type { ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { NAV } from "@/lib/labels";
+import { BRAND, NAV } from "@/lib/labels";
 import { ThemeRoot, useMode } from "@/lib/theme";
 
 const ICONS: Record<keyof typeof NAV, ReactNode> = {
@@ -21,6 +22,10 @@ export function BottomNav({ active }: { active: NavKey | null }) {
   const mode = useMode();
   return (
     <nav className="app-nav" aria-label="Main">
+      <Link href="/" className="nav-brand" aria-label={BRAND.homeLabel}>
+        <Image src="/brand/edith-icon.png" alt="" width={36} height={36} />
+        <span>{BRAND.name}</span>
+      </Link>
       {(Object.keys(NAV) as NavKey[]).map((key) => (
         <Link key={key} href={NAV[key].href} className="nav-item" aria-current={active === key ? "page" : undefined}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
