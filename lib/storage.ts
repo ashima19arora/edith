@@ -270,11 +270,27 @@ function userStore(id: string): Store {
   };
 }
 
+const AUTH_WAIT_MS = 5000;
+let authStalled = false; // Once Supabase stops answering, later screens don't wait for it again
+
+// A network can leave this request hanging forever, and every screen waits on it. Past the limit, carry on without it.
+async function signedInUser(supabase: NonNullable<ReturnType<typeof createClient>>) {
+  if (authStalled) return null;
+  const timeout = new Promise<"stalled">((resolve) => setTimeout(() => resolve("stalled"), AUTH_WAIT_MS));
+  const user = supabase.auth.getUser().then(({ data }) => data.user, () => null);
+  const result = await Promise.race([user, timeout]);
+  if (result === "stalled") {
+    authStalled = true;
+    return null;
+  }
+  return result;
+}
+
 export async function getAccount(): Promise<Account | null> {
   const supabase = createClient();
   if (supabase) {
-    const { data } = await supabase.auth.getUser();
-    if (data.user) return { kind: "user", id: data.user.id, email: data.user.email ?? null };
+    const user = await signedInUser(supabase);
+    if (user) return { kind: "user", id: user.id, email: user.email ?? null };
   }
   return localStorage.getItem(GUEST_KEY) ? { kind: "guest" } : null;
 }
