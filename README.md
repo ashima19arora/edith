@@ -24,7 +24,7 @@
 
 *Every city has a villain. Delhi's is invisible, and the apps we have only tell you its name.*
 
-Air pollution takes about **8 years** off a Delhi resident's life, and nearly half of Delhi's pollution comes from local sources ([AQLI 2025, University of Chicago](https://aqli.epic.uchicago.edu/)).
+Air pollution takes about **8 years** off a Delhi resident's life ([AQLI 2025, University of Chicago](https://aqli.epic.uchicago.edu/)).
 
 Delhi checks the AQI every day. The number never says what to do next.
 

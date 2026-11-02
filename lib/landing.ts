@@ -25,7 +25,7 @@ export const LANDING = {
   },
   stats: [
     { tone: "red", prefix: "~", count: 8, unit: "Years", text: "taken off a Delhi resident’s life by air pollution.", source: "AQLI 2025, UNIVERSITY OF CHICAGO" },
-    { tone: "blue", prefix: "~", count: 50, unit: "%", text: "of Delhi’s pollution comes from local sources. Our own habits count.", source: "AQLI 2025, UNIVERSITY OF CHICAGO" },
+    { tone: "blue", prefix: "", count: 1, unit: "Cigarette", text: "a day is the rough health risk of breathing 22 µg/m³ of PM2.5. Delhi’s yearly average is at least four times that.", source: "BERKELEY EARTH, AQLI 2025" },
     { tone: "yellow", prefix: "", count: 0, unit: "Next steps", text: "Delhi checks the AQI every day. The number never says what to do next.", source: "THE GAP EDITH FILLS" },
   ],
   problem: {

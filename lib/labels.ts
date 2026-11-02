@@ -166,7 +166,7 @@ export const SETUP_TEXT = {
   pets: "Any pets at home?",
   pickAll: pair("Pick all that apply.", "Choose all that apply."),
   kmOneWay: "km one way",
-  address: "Or type the address, we'll measure it",
+  address: "Or type the area, we'll estimate it",
   addressPlaceholder: "Area of your college or office, like Rohini",
   addressRouted: (km: number) => `${km} km by road. Move the slider if your route is different.`,
   addressFound: (km: number) => `About ${km} km, estimated. Move the slider if that's off.`,
@@ -278,7 +278,7 @@ export const RECAP_TEXT = {
 
 export const LEGAL = {
   home: "← EDITH home",
-  updated: "Last updated: 1 November 2026",
+  updated: "Last updated: 2 November 2026",
   contactPrefix: "Questions or requests:",
   email: "arora.19ashima@gmail.com",
   privacyTitle: "Privacy Policy",
@@ -344,7 +344,7 @@ export const LEGAL = {
     },
     {
       heading: "Open source",
-      body: "EDITH's code is available under the MIT License. Data sources are credited in the app's documentation.",
+      body: "EDITH's code is available under the MIT License. Data sources are credited in the app, under Settings › How we calculate.",
     },
   ],
 };
@@ -453,8 +453,8 @@ export const HOME_TEXT = {
   chartStart: pair("6a", "6 AM"),
   chartEnd: pair("10p", "10 PM"),
   youSave: "You save",
-  kgUnit: pair("kg + CO₂", "kg CO₂"),
-  inrUnit: pair("+ today", "today"),
+  kgUnit: pair("kg CO₂", "kg CO₂"),
+  inrUnit: pair("today", "today"),
   costsMore: (inr: number) => `Costs about ₹${inr} more today`,
   missionAccept: pair("Accept", "I'll do this"),
   missionDone: pair("Done!", "Done ✓"),
@@ -475,7 +475,7 @@ export const HOME_TEXT = {
     hero: (n: number) => `${n}-day streak`,
     plain: (n: number) => `${n}-day streak`,
   },
-  streakSub: pair("4 taps · 30 sec", "4 questions · 30 sec"),
+  streakSub: pair("Quick check-in · 30 sec", "Quick check-in · 30 sec"),
   checkinButton: pair("Log today's Canon Event", "Do today's check-in"),
 };
 
@@ -569,8 +569,8 @@ export const SETTINGS_TEXT = {
   lookFailed: "Your look changed on this device, but couldn't be saved to your account.",
   guestTitle: pair("You're in guest mode", "You're using EDITH as a guest"),
   guestText: pair(
-    "Your data lives on this phone only. Sign in to save your data, keep your streak and set up your Squad.",
-    "Your data is saved on this phone only. Sign in to keep your streak and set up your family.",
+    "Your data lives on this device only. Sign in to save your data, keep your streak and set up your Squad.",
+    "Your data is saved on this device only. Sign in to keep your streak and set up your family.",
   ),
   signInSave: "Sign in to save your data",
   myDetails: "My details",
@@ -588,7 +588,7 @@ export const SETTINGS_TEXT = {
   account: "Account",
   signedIn: pair("Signed in with Google", "Google"),
   guestWord: "Guest",
-  onThisPhone: "On this phone",
+  onThisPhone: "On this device",
   signOut: "Sign out",
   about: "About",
   version: "Version",
@@ -1024,8 +1024,8 @@ export const FAMILY_TEXT = {
   },
   guestTitle: pair("Sign in to create your Squad", "Sign in to set up your family"),
   guestBody: pair(
-    "and protect your family. Guest mode keeps everything on this phone, so it can't be shared with family yet.",
-    "and protect them on bad air days. Guest mode keeps everything on this phone, so it can't be shared yet.",
+    "and protect your family. Guest mode keeps everything on this device, so it can't be shared with family yet.",
+    "and protect them on bad air days. Guest mode keeps everything on this device, so it can't be shared yet.",
   ),
   google: "Continue with Google",
   guestNote: "Your streak and history come with you.",
