@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { CornerWeb, Skyline, SpiderIcon } from "@/components/art";
 import { SIGN_IN } from "@/lib/labels";
-import { startGuest } from "@/lib/storage";
+import { endSample, startGuest } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/client";
 import { ThemeRoot } from "@/lib/theme";
 
@@ -24,6 +24,7 @@ export default function SignIn() {
   }, []);
 
   async function google() {
+    endSample();
     const supabase = createClient();
     if (!supabase) return setMessage(SIGN_IN.googleMissing);
     const { error } = await supabase.auth.signInWithOAuth({

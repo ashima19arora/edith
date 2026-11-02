@@ -10495,3 +10495,36 @@ input[type="range"]::-moz-range-thumb {
     border-top: 0;
   }
 }
+
+/* Sample mode */
+
+.sample-banner {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 6px 12px;
+  background: #ffe14d;
+  color: #111;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sample-banner button {
+  flex: none;
+  padding: 2px 10px;
+  background: #111;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sample-loading {
+  padding: 40px 20px;
+  text-align: center;
+}

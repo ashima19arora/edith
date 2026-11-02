@@ -350,6 +350,12 @@ export const LEGAL = {
   ],
 };
 
+export const SAMPLE_TEXT = {
+  banner: "Sample data, not a real person's history",
+  exit: "Exit",
+  loading: "Loading sample data…",
+};
+
 export const BRAND = { name: "EDITH", homeLabel: "EDITH home page" };
 
 export const NAV = {

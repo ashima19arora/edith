@@ -2,6 +2,7 @@
 
 import { createClient } from "./supabase/client";
 import type { XpEvent } from "./checkin";
+import type { SampleData } from "./sample";
 import type { Bill, Checkin, Co2Breakdown, MissionStatus, Mode, OneOff, SetupAnswers } from "./types";
 
 export interface Profile {
@@ -47,6 +48,10 @@ const ONE_OFFS_KEY = "edith.oneOffs";
 const BILLS_KEY = "edith.bills";
 const MISSIONS_KEY = "edith.missions";
 const XP_KEY = "edith.xp";
+const SAMPLE_KEY = "edith.sample";
+const SAMPLE_BACKUP_KEY = "edith.sampleBackup";
+// Everything sample mode replaces, put back exactly as it was on exit.
+const GUEST_DATA_KEYS = [GUEST_KEY, PROFILE_KEY, SETUP_KEY, CHECKINS_KEY, ONE_OFFS_KEY, BILLS_KEY, MISSIONS_KEY, XP_KEY, "edith.mode", "edith.setupDraft", "edith.billCardSeen"];
 const NEW_PROFILE: Profile = { displayName: null, mode: "hero", onboarded: false };
 
 function readJson<T>(key: string): T | null {
@@ -286,7 +291,42 @@ async function signedInUser(supabase: NonNullable<ReturnType<typeof createClient
   return result;
 }
 
+export function isSample(): boolean {
+  return localStorage.getItem(SAMPLE_KEY) !== null;
+}
+
+export function startSample(data: SampleData) {
+  if (!isSample()) {
+    const backup = Object.fromEntries(GUEST_DATA_KEYS.map((key) => [key, localStorage.getItem(key)]));
+    localStorage.setItem(SAMPLE_BACKUP_KEY, JSON.stringify(backup));
+  }
+  localStorage.setItem(SAMPLE_KEY, "1");
+  localStorage.setItem(GUEST_KEY, "1");
+  localStorage.setItem("edith.mode", "hero");
+  localStorage.setItem(PROFILE_KEY, JSON.stringify({ displayName: "Sample", mode: "hero", onboarded: true }));
+  localStorage.setItem(SETUP_KEY, JSON.stringify(data.setup));
+  localStorage.setItem(CHECKINS_KEY, JSON.stringify(data.checkins));
+  localStorage.setItem(ONE_OFFS_KEY, JSON.stringify(data.oneOffs));
+  localStorage.setItem(BILLS_KEY, JSON.stringify(data.bills));
+  localStorage.setItem(XP_KEY, JSON.stringify(data.xp));
+  localStorage.removeItem(MISSIONS_KEY);
+}
+
+export function endSample() {
+  if (!isSample()) return;
+  const backup = readJson<Record<string, string | null>>(SAMPLE_BACKUP_KEY) ?? {};
+  for (const key of GUEST_DATA_KEYS) {
+    const value = backup[key];
+    if (typeof value === "string") localStorage.setItem(key, value);
+    else localStorage.removeItem(key);
+  }
+  localStorage.removeItem(SAMPLE_BACKUP_KEY);
+  localStorage.removeItem(SAMPLE_KEY);
+}
+
 export async function getAccount(): Promise<Account | null> {
+  // Sample mode never reaches a real account, even if this browser is signed in.
+  if (isSample()) return { kind: "guest" };
   const supabase = createClient();
   if (supabase) {
     const user = await signedInUser(supabase);
@@ -297,7 +337,7 @@ export async function getAccount(): Promise<Account | null> {
 
 // When a guest signs in for the first time, their answers move to the new account.
 export async function adoptGuestData(account: Account): Promise<void> {
-  if (account.kind !== "user" || !localStorage.getItem(GUEST_KEY)) return;
+  if (account.kind !== "user" || !localStorage.getItem(GUEST_KEY) || isSample()) return;
   const store = userStore(account.id);
   const profile = await store.getProfile();
   if (!profile.onboarded) {
@@ -317,6 +357,7 @@ export async function adoptGuestData(account: Account): Promise<void> {
 }
 
 export async function signInWithGoogle(): Promise<void> {
+  endSample();
   const supabase = createClient();
   if (!supabase) throw new Error("Supabase is not configured");
   const { error } = await supabase.auth.signInWithOAuth({
@@ -327,11 +368,13 @@ export async function signInWithGoogle(): Promise<void> {
 }
 
 export async function signOut(): Promise<void> {
+  if (isSample()) return endSample(); // Leaves sample mode only, so a real sign-in underneath stays
   await createClient()?.auth.signOut();
   localStorage.removeItem(GUEST_KEY);
 }
 
 export function startGuest() {
+  endSample();
   localStorage.setItem(GUEST_KEY, "1");
 }
 
