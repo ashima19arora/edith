@@ -10376,3 +10376,131 @@ input[type="range"]::-moz-range-thumb {
     font-size: 26px;
   }
 }
+
+/* Sign-in, style picker, setup and check-in on laptops: the whole screen, not a phone-width strip */
+
+.sign-skyline .skyline:not(:first-child) {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  [data-mode="hero"].edith-root {
+    background: var(--night);
+  }
+
+  [data-mode="plain"].edith-root {
+    background: var(--plain-bg);
+  }
+
+  .sign-in,
+  .screen.setup,
+  .screen.finish,
+  .screen.ci,
+  .screen.ci-done,
+  .screen:has(.style-body) {
+    max-width: none;
+  }
+
+  .sign-in {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: 1fr auto;
+    align-items: center;
+    column-gap: 24px;
+    height: 100dvh;
+    min-height: 560px;
+  }
+
+  .sign-in-pitch {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: end;
+    width: min(100%, 480px);
+    padding: 90px 24px 16px;
+  }
+
+  .sign-in-actions {
+    grid-column: 2;
+    grid-row: 1;
+    width: min(100%, 460px);
+    padding: 90px 24px 16px;
+    background: none;
+  }
+
+  .sign-skyline {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: flex;
+  }
+
+  .sign-skyline .skyline,
+  .sign-skyline .skyline:not(:first-child) {
+    display: block;
+    flex: 1;
+    width: 33.4%;
+    margin: 0;
+  }
+
+  .spider-drop {
+    left: 8%;
+  }
+
+  /* Everything lines up in one centred column, while the background fills the screen */
+  .edith-root .setup-head,
+  .edith-root .progress,
+  .edith-root .ci-head,
+  .edith-root .ci-progress,
+  .edith-root .setup .screen-body,
+  .edith-root .finish .screen-body,
+  .edith-root .ci .screen-body,
+  .edith-root .ci-done .screen-body,
+  .edith-root .style-body,
+  .edith-root .setup .screen-foot,
+  .edith-root .finish .screen-foot,
+  .edith-root .ci .screen-foot,
+  .edith-root .ci-done .screen-foot,
+  .edith-root .style-foot {
+    padding-right: max(18px, calc(50% - 360px));
+    padding-left: max(18px, calc(50% - 360px));
+  }
+}
+
+/* Keep the main button on screen when a laptop is too short for the whole question */
+@media (min-width: 768px) {
+  .screen.setup,
+  .screen.finish,
+  .screen.ci,
+  .screen.ci-done,
+  .screen:has(.style-body) {
+    overflow: clip;
+  }
+}
+
+@media (min-width: 768px) and (max-height: 760px) {
+  .style-body {
+    padding-top: 24px;
+  }
+
+  .style-sticker,
+  .style-cards {
+    margin-top: 12px;
+  }
+
+  .preview {
+    height: 156px;
+  }
+
+  .setup-head {
+    padding-top: 22px;
+  }
+
+  [data-mode="plain"] .choices-list,
+  [data-mode="plain"] .choices-multi {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  [data-mode="plain"] .choices .choice:nth-child(2) {
+    border-top: 0;
+  }
+}

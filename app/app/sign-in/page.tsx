@@ -67,7 +67,11 @@ export default function SignIn() {
           )}
         </section>
 
-        <Skyline />
+        <div className="sign-skyline">
+          <Skyline />
+          <Skyline />
+          <Skyline />
+        </div>
 
         <section className="sign-in-actions">
           <button type="button" className="google-btn" onClick={google}>

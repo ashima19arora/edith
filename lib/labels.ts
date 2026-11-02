@@ -43,7 +43,7 @@ export const SIGN_IN = {
   airPrefix: "Delhi right now:",
   google: "Continue with Google",
   guest: "Try without an account",
-  guestNote: "Guest mode keeps your data on this phone. Sign in later to save streaks and add your family.",
+  guestNote: "Guest mode keeps your data on this device. Sign in later to save streaks and add your family.",
   googleMissing: "Google sign-in isn't set up yet. Try without an account for now.",
   googleFailed: "Google sign-in didn't work. Please try again, or try without an account.",
 };

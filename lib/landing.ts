@@ -104,7 +104,7 @@ export const LANDING = {
       ["tailwindcss", "#06B6D4", "Tailwind CSS", "Both Hero and Plain styles"],
       ["supabase", "#3FCF8E", "Supabase", "Google sign-in and Family"],
       ["googlegemini", "#8E75B2", "Google Gemini", "Daily mission, EDITH chat, reads the bill"],
-      ["googlemaps", "#4285F4", "Google Maps", "Road distance for your daily trip"],
+      ["openmeteo", "#46E6F5", "Open-Meteo", "Live air quality and forecasts"],
       ["vercel", "#FFFFFF", "Vercel", "Hosting"],
       ["vitest", "#6E9F18", "Vitest", "Automated tests for the calculations"],
     ],
