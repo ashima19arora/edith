@@ -10,6 +10,7 @@ import type { Bill } from "@/lib/types";
 import { CameraIcon } from "./art";
 
 const MAX_SIDE = 1600;
+const MAX_PDF_BYTES = 3_000_000; // A PDF can't be shrunk here, and has to fit the upload limit
 
 // Phone photos are large, so shrink them to fit the upload limit while keeping the text readable.
 async function shrink(file: File): Promise<string> {
@@ -20,6 +21,15 @@ async function shrink(file: File): Promise<string> {
   canvas.height = Math.round(bitmap.height * scale);
   canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
   return canvas.toDataURL("image/jpeg", 0.8).split(",")[1];
+}
+
+function base64Of(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(",")[1]);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
 }
 
 function monthRange(month: string) {
@@ -60,14 +70,21 @@ export function BillCapture({ account, month, className, estimate, onDone, onSav
   async function picked(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+    // This card can sit low on the page, behind the nav, so bring the result into view.
+    event.target.closest("section")?.scrollIntoView({ block: "center" });
+    const pdf =file.type === "application/pdf";
+    if (pdf && file.size > MAX_PDF_BYTES) {
+      setState("manual");
+      return setError(TEXT.tooBig);
+    }
     setState("reading");
     setError("");
     try {
-      const image = await shrink(file);
+      const image = pdf ? await base64Of(file) : await shrink(file);
       const response = await fetch("/api/bill", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image, mime: "image/jpeg" }),
+        body: JSON.stringify({ image, mime: pdf ? "application/pdf" : "image/jpeg" }),
       });
       if (!response.ok) throw new Error("Couldn't read the bill");
       const read = (await response.json()) as { units: number; periodStart: string; periodEnd: string };
@@ -126,8 +143,7 @@ export function BillCapture({ account, month, className, estimate, onDone, onSav
             {state === "reading" ? TEXT.reading : TEXT.button[mode]}
             <input
               type="file"
-              accept="image/*"
-              capture="environment"
+              accept="image/*,application/pdf"
               className="sr-only"
               disabled={state === "reading"}
               onChange={picked}

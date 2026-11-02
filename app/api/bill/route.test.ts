@@ -34,6 +34,17 @@ describe("bill route", () => {
     expect(await (await post(valid)).json()).toEqual({ units: 320, periodStart: "2026-09-01", periodEnd: "2026-09-30" });
   });
 
+  it("accepts a PDF", async () => {
+    configure();
+    geminiSays('{"units": 320, "period_start": "2026-09-01", "period_end": "2026-09-30"}');
+    expect((await post({ image: "aGVsbG8=", mime: "application/pdf" })).status).toBe(200);
+  });
+
+  it("rejects other file types", async () => {
+    configure();
+    expect((await post({ image: "aGVsbG8=", mime: "text/plain" })).status).toBe(400);
+  });
+
   it("rejects an unreadable bill, nonsense units and bad dates", async () => {
     configure();
     geminiSays('{"units": null}');

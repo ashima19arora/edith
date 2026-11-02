@@ -262,8 +262,7 @@ function BillStep({ draft, update }: StepProps) {
         {TEXT.snap}
         <input
           type="file"
-          accept="image/*"
-          capture="environment"
+          accept="image/*,application/pdf"
           className="sr-only"
           onChange={(e) => setPicked(Boolean(e.target.files?.length))}
         />

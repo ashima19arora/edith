@@ -179,7 +179,7 @@ export const SETUP_TEXT = {
   acsUnit: "ACs",
   acHours: "Hours a day in summer",
   cylinder: "One cylinder lasts about",
-  snap: "Snap your bill",
+  snap: "Add a photo or PDF",
   snapSoon: "You can add the bill itself from My Footprint after setup. Pick a rough amount for now.",
   noBill: "No bill handy? Pick a rough monthly amount",
   howOften: "How often?",
@@ -279,7 +279,7 @@ export const RECAP_TEXT = {
 
 export const LEGAL = {
   home: "← EDITH home",
-  updated: "Last updated: 2 November 2026",
+  updated: "Last updated: 3 November 2026",
   contactPrefix: "Questions or requests:",
   email: "arora.19ashima@gmail.com",
   privacyTitle: "Privacy Policy",
@@ -311,7 +311,7 @@ export const LEGAL = {
     },
     {
       heading: "Services that handle data for us",
-      body: "Supabase stores accounts and signed-in data. Vercel hosts the app. Google provides sign-in. Open-Meteo receives place names you search for, and coordinates, to return air quality and locations. If road distance is turned on, Google Maps receives your base location and the address you type. If AI features are turned on, Google Gemini receives your biggest footprint source and a list of possible daily tips to choose today's tip; any question you type to EDITH, with your air readings, routine, household and footprint numbers (including the names you gave family profiles, but not your own name, email or coordinates); and any electricity bill photo you choose to upload, so it can read the units and dates. We don't store the photo, only those details. A bill photo can show your name and address, so crop it if you prefer. If you use location access, your browser asks your permission first, and BigDataCloud receives your coordinates and IP address to name your area. The sign-in screen uses the rough location Vercel works out from your IP address to show your city's air, and doesn't save it.",
+      body: "Supabase stores accounts and signed-in data. Vercel hosts the app. Google provides sign-in. Open-Meteo receives place names you search for, and coordinates, to return air quality and locations. If road distance is turned on, Google Maps receives your base location and the address you type. If AI features are turned on, Google Gemini receives your biggest footprint source and a list of possible daily tips to choose today's tip; any question you type to EDITH, with your air readings, routine, household and footprint numbers (including the names you gave family profiles, but not your own name, email or coordinates); and any electricity bill photo or PDF you choose to upload, so it can read the units and dates. We don't store the file, only those details. A bill can show your name and address, so crop a photo if you prefer. If you use location access, your browser asks your permission first, and BigDataCloud receives your coordinates and IP address to name your area. The sign-in screen uses the rough location Vercel works out from your IP address to show your city's air, and doesn't save it.",
     },
     {
       heading: "Keeping and deleting your data",
@@ -621,7 +621,7 @@ export const CALCULATE = {
       points: [
         "During the month, electricity is an estimate from your household and appliances. It starts at about 180 units a month for 4 people, near a typical Delhi home.",
         "Your bill arrives after the month ends, so it can correct that month's estimate and improve later ones.",
-        "Add a bill by photo, or type the units yourself.",
+        "Add a bill as a photo or PDF, or type the units yourself.",
       ],
     },
     {
@@ -674,10 +674,11 @@ const quarters = (n: number) => {
 
 export const BILL_TEXT = {
   title: pair("Got last month's bill?", "Got last month's bill?"),
-  text: pair("Snap it to make your numbers exact. One bill covers the whole home.", "Add it to make your numbers exact. One bill covers the whole home."),
-  button: pair("Snap", "Add"),
+  text: pair("Add a photo or PDF to make your numbers exact. One bill covers the whole home.", "Add a photo or PDF to make your numbers exact. One bill covers the whole home."),
+  button: pair("Add", "Add"),
   reading: "Reading…",
-  readFailed: "We couldn't read that photo. Type the units from your bill instead.",
+  readFailed: "We couldn't read that file. Type the units from your bill instead.",
+  tooBig: "That PDF is too large to read. Type the units from your bill instead.",
   saveFailed: "Couldn't save your bill. Check your connection and try again.",
   badUnits: "Enter the units as a number, like 320.",
   unitsPlaceholder: "Units used, e.g. 320",
