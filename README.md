@@ -18,6 +18,8 @@
 
 <p align="center">
   <a href="https://edith-navy.vercel.app"><b>Try it live</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://edith-navy.vercel.app/app/sample"><b>See it with sample data</b></a>
 </p>
 
 ## The problem
@@ -104,6 +106,8 @@ EDITH's next steps focus on two things: replacing estimates with real measuremen
 ## Get started
 
 **Try it now:** [edith-navy.vercel.app](https://edith-navy.vercel.app). Choose **Try without an account** and you're in, with no sign-up. To install it, use **Add to Home Screen** in your phone's browser.
+
+**See six months of history:** open [the sample data link](https://edith-navy.vercel.app/app/sample) to see the heat map, ranks and footprint trend filled in. The history is made up and labelled on every screen, stays only in your browser, and goes away when you press **Exit**.
 
 **Run it yourself** (Node.js 20 or newer):
 
