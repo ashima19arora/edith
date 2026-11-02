@@ -11,13 +11,13 @@ import { ThemeRoot } from "@/lib/theme";
 
 export default function SignIn() {
   const router = useRouter();
-  const [air, setAir] = useState<{ aqi: number; category: string } | null>(null);
+  const [air, setAir] = useState<{ aqi: number; category: string; place?: string } | null>(null);
   const [message, setMessage] = useState(() =>
     new URLSearchParams(window.location.search).has("error") ? SIGN_IN.googleFailed : "",
   );
 
   useEffect(() => {
-    fetch("/api/air")
+    fetch("/api/air?nearby=1")
       .then((response) => (response.ok ? response.json() : null))
       .then(setAir)
       .catch(() => setAir(null));
@@ -62,7 +62,7 @@ export default function SignIn() {
           </p>
           {air && (
             <p className="air-bubble">
-              {SIGN_IN.airPrefix} <b>AQI {air.aqi} · {air.category}</b>
+              {SIGN_IN.airPrefix(air.place ?? SIGN_IN.airDefaultPlace)} <b>AQI {air.aqi} · {air.category}</b>
             </p>
           )}
         </section>

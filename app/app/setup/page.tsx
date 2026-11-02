@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BackIcon, CameraIcon, CheckIcon, CornerWeb, PinIcon, SpiderIcon } from "@/components/art";
 import { Choice, FieldLabel, MultiChoice, optionsOf, PetRow, Stepper } from "@/components/setup-controls";
-import { ROAD_DISTANCE_FACTOR } from "@/lib/factors";
+import { estimateTripKm, placeFromLookup } from "@/lib/distance";
 import { FINISH, OPTIONS, SECTION_NAMES, SETUP_TEXT as TEXT, STEP_COPY } from "@/lib/labels";
 import {
   AREAS,
@@ -57,12 +57,18 @@ async function geocode(name: string) {
   return data.results ?? [];
 }
 
-function straightLineKm(aLat: number, aLng: number, bLat: number, bLng: number): number {
-  const rad = Math.PI / 180;
-  const dLat = (bLat - aLat) * rad;
-  const dLng = (bLng - aLng) * rad;
-  const h = Math.sin(dLat / 2) ** 2 + Math.cos(aLat * rad) * Math.cos(bLat * rad) * Math.sin(dLng / 2) ** 2;
-  return 6371 * 2 * Math.asin(Math.sqrt(h));
+// Names the device's current spot. Free and keyless, and only allowed from the browser. Null if it fails.
+async function placeName(lat: number, lng: number): Promise<string | null> {
+  try {
+    const response = await fetch(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`,
+      { signal: AbortSignal.timeout(8000) },
+    );
+    if (!response.ok) return null;
+    return placeFromLookup(await response.json());
+  } catch {
+    return null;
+  }
 }
 
 interface StepProps {
@@ -72,20 +78,22 @@ interface StepProps {
 
 function LocationStep({ draft, update }: StepProps) {
   const [other, setOther] = useState(
-    Boolean(draft.location && !AREAS.some((a) => a.area === draft.location!.area)),
+    Boolean(draft.location && draft.location.area !== TEXT.locationFound && !AREAS.some((a) => a.area === draft.location!.area)),
   );
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Awaited<ReturnType<typeof geocode>>>([]);
   const [message, setMessage] = useState("");
-  const usingDevice = draft.location?.area === TEXT.locationFound;
+  const [fromDevice, setFromDevice] = useState(draft.location?.area === TEXT.locationFound);
 
   function useDevice() {
     setMessage("");
     if (!navigator.geolocation) return setMessage(TEXT.locationFailed);
     navigator.geolocation.getCurrentPosition(
-      ({ coords }) => {
+      async ({ coords }) => {
+        const area = await placeName(coords.latitude, coords.longitude);
         setOther(false);
-        update({ location: { area: TEXT.locationFound, lat: coords.latitude, lng: coords.longitude } });
+        setFromDevice(true);
+        update({ location: { area: area ?? TEXT.locationFound, lat: coords.latitude, lng: coords.longitude } });
       },
       () => setMessage(TEXT.locationFailed),
     );
@@ -107,12 +115,17 @@ function LocationStep({ draft, update }: StepProps) {
     }
   }
 
-  const selected = other ? "other" : (draft.location?.area ?? null);
+  const selected = fromDevice ? null : other ? "other" : (draft.location?.area ?? null);
+  const deviceArea = draft.location?.area;
   return (
     <>
-      <button type="button" className="wide-btn" aria-pressed={usingDevice} onClick={useDevice}>
-        {usingDevice ? <CheckIcon /> : <PinIcon />}
-        {usingDevice ? TEXT.locationFound : TEXT.useLocation.hero}
+      <button type="button" className="wide-btn" aria-pressed={fromDevice} onClick={useDevice}>
+        {fromDevice ? <CheckIcon /> : <PinIcon />}
+        {!fromDevice
+          ? TEXT.useLocation.hero
+          : deviceArea && deviceArea !== TEXT.locationFound
+            ? TEXT.locationFoundIn(deviceArea)
+            : TEXT.locationFound}
       </button>
       <FieldLabel>{TEXT.pickArea}</FieldLabel>
       <Choice
@@ -121,6 +134,7 @@ function LocationStep({ draft, update }: StepProps) {
         options={[...AREAS.map((a): [string, string] => [a.area, a.area]), ["other", "Other"]]}
         onChange={(key) => {
           setMessage("");
+          setFromDevice(false);
           const area = AREAS.find((a) => a.area === key);
           setOther(!area);
           update({ location: area ?? null });
@@ -179,10 +193,8 @@ function DistanceStep({ draft, update }: StepProps) {
       // Fall through to the estimate
     }
     try {
-      const [place] = await geocode(address);
-      if (!place) return setMessage(TEXT.addressFailed);
-      const km = straightLineKm(base.lat, base.lng, place.latitude, place.longitude) * ROAD_DISTANCE_FACTOR;
-      const rounded = Math.min(40, Math.max(1, Math.round(km)));
+      const rounded = estimateTripKm({ lat: base.lat, lng: base.lng }, await geocode(address));
+      if (rounded === null) return setMessage(TEXT.addressFailed);
       update({ kmOneWay: rounded });
       setMessage(TEXT.addressFound(rounded));
     } catch {
