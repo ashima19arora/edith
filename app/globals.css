@@ -10063,11 +10063,6 @@ input[type="range"]::-moz-range-thumb {
   display: none;
 }
 
-.home-logo img {
-  display: block;
-  border-radius: 10px;
-}
-
 /* Only one skyline fits on a phone; laptops line up three so the windows keep their shape. */
 .home-sky .skyline:not(:first-child) {
   display: none;
@@ -10144,10 +10139,6 @@ input[type="range"]::-moz-range-thumb {
     font-size: 20px;
     font-weight: 700;
     letter-spacing: 0;
-  }
-
-  .home-logo {
-    display: none;
   }
 
   .home-sky .skyline,
