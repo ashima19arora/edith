@@ -220,14 +220,26 @@ function DistanceStep({ draft, update }: StepProps) {
         <p className="range-ends"><span>1 km</span><span>40 km</span></p>
       </div>
       <FieldLabel>{TEXT.address}</FieldLabel>
-      <input
-        className="text-input"
-        value={draft.address}
-        placeholder={TEXT.addressPlaceholder}
-        aria-label={TEXT.address}
-        onChange={(e) => update({ address: e.target.value })}
-        onBlur={measure}
-      />
+      <form
+        className="other-search"
+        onSubmit={(e) => {
+          e.preventDefault();
+          measure();
+        }}
+      >
+        <input
+          className="text-input"
+          value={draft.address}
+          placeholder={TEXT.addressPlaceholder}
+          aria-label={TEXT.address}
+          onChange={(e) => update({ address: e.target.value })}
+          onBlur={(e) => {
+            // The Find button measures on its own click
+            if (!e.relatedTarget?.matches("button[type=submit]")) measure();
+          }}
+        />
+        <button type="submit" className="small-btn">{TEXT.addressFind}</button>
+      </form>
       {message && <p className="form-note" role="status">{message}</p>}
       <FieldLabel>{TEXT.daysWeek}</FieldLabel>
       <Choice
